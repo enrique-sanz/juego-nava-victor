@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <title>El Día Biwenger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="game-container">
+
+    <section id="welcome-screen" class="screen active">
+      <div class="scanlines"></div>
+      <div class="stars"></div>
+
+      <h1 class="title">
+        <span class="line">BIENVENIDO</span>
+        <span class="line">AL JUEGO DEL DIA</span>
+        <span class="line accent">BIWENGER</span>
+      </h1>
+
+      <div class="characters">
+        <div class="char-wrap">
+          <div class="zzz">
+            <span>Z</span><span>Z</span><span>Z</span>
+          </div>
+          <canvas class="char-canvas" id="char1" width="64" height="80"></canvas>
+          <div class="char-name">VICTOR</div>
+        </div>
+        <div class="char-wrap">
+          <div class="zzz">
+            <span>Z</span><span>Z</span><span>Z</span>
+          </div>
+          <canvas class="char-canvas" id="char2" width="64" height="80"></canvas>
+          <div class="char-name">NAVA</div>
+        </div>
+      </div>
+
+      <button id="start-btn" class="pixel-btn">EMPEZAR EL JUEGO</button>
+      <div class="press-hint">PULSA PARA COMENZAR</div>
+    </section>
+
+    <section id="instructions-screen" class="screen">
+      <div class="scanlines"></div>
+
+      <h2 class="title-small">INSTRUCCIONES</h2>
+
+      <div class="instructions-box">
+        <p>EL JUGADOR EXPERIMENTARA UN DIA DE COMIDA BIWENGER, DONDE TENDRA QUE SUPERAR DIFERENTES PRUEBAS PARA SOBREVIVIR.</p>
+        <p class="accent-text">SI TERMINA EL DIA VIVO HABRA GANADO LA PARTIDA.</p>
+      </div>
+
+      <div class="instructions-icon">
+        <canvas id="char-icon" width="48" height="60"></canvas>
+      </div>
+
+      <button id="continue-btn" class="pixel-btn">CONTINUAR</button>
+      <button id="back-btn" class="pixel-btn ghost">VOLVER</button>
+    </section>
+
+  </div>
+  <script src="game.js"></script>
+</body>
+</html>
