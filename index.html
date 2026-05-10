@@ -30,14 +30,18 @@
           <div class="zzz">
             <span>Z</span><span>Z</span><span>Z</span>
           </div>
-          <canvas class="char-canvas" id="char1" width="64" height="80"></canvas>
+          <div class="char-frame">
+            <img class="char-photo" src="assets/victor.png" alt="Victor durmiendo">
+          </div>
           <div class="char-name">VICTOR</div>
         </div>
         <div class="char-wrap">
           <div class="zzz">
             <span>Z</span><span>Z</span><span>Z</span>
           </div>
-          <canvas class="char-canvas" id="char2" width="64" height="80"></canvas>
+          <div class="char-frame">
+            <img class="char-photo" src="assets/nava.png" alt="Nava durmiendo">
+          </div>
           <div class="char-name">NAVA</div>
         </div>
       </div>
@@ -57,11 +61,46 @@
       </div>
 
       <div class="instructions-icon">
-        <canvas id="char-icon" width="48" height="60"></canvas>
+        <div class="char-frame small">
+          <img class="char-photo" src="assets/victor.png" alt="Personaje">
+        </div>
       </div>
 
       <button id="continue-btn" class="pixel-btn">CONTINUAR</button>
       <button id="back-btn" class="pixel-btn ghost">VOLVER</button>
+    </section>
+
+    <section id="select-screen" class="screen">
+      <div class="scanlines"></div>
+
+      <h2 class="title-small">ELIGE TU PERSONAJE</h2>
+      <div class="select-hint">PULSA SOBRE UNO</div>
+
+      <div class="char-select">
+        <button class="char-card" data-character="victor" type="button">
+          <div class="char-face-frame">
+            <img class="char-face" src="assets/victor-face.png" alt="Victor">
+          </div>
+          <div class="char-card-name">VICTOR</div>
+        </button>
+
+        <button class="char-card" data-character="nava" type="button">
+          <div class="char-face-frame">
+            <img class="char-face" src="assets/nava-face.png" alt="Nava">
+          </div>
+          <div class="char-card-name">NAVA</div>
+        </button>
+      </div>
+
+      <div class="select-stats">
+        <div class="stat-line">
+          <span>SELECCIONADO:</span>
+          <span id="selected-name" class="stat-value">---</span>
+        </div>
+      </div>
+
+      <button id="play-btn" class="pixel-btn" disabled>JUGAR</button>
+      <button id="select-back-btn" class="pixel-btn ghost">VOLVER</button>
     </section>
 
   </div>

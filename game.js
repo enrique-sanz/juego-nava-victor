@@ -7,120 +7,16 @@
 (() => {
   'use strict';
 
-  // ---------- Paleta pixel-art ----------
-  const PALETTE = {
-    '.': null,                // transparente
-    'H': '#2a1810',           // pelo oscuro
-    'h': '#3d2a1a',           // pelo corto/cuero cabelludo
-    'S': '#f4c89e',           // piel base
-    's': '#d4a578',           // piel sombra
-    'e': '#1a0e08',           // ojo cerrado
-    'n': '#c89878',           // sombra de nariz
-    'm': '#7a2828',           // boca
-    'B': '#1a0e08',           // barba oscura
-    'b': '#3d2418',           // barba media
-    'J': '#0e0e1f',           // chaqueta negra
-    'j': '#1f1f3a',           // chaqueta highlight
-    'K': '#d4b896',           // jersey beige
-    'k': '#a89070',           // jersey sombra
-    'P': '#5a3a7a',           // morado manta
-    'R': '#7a2222',           // rojo sofá
-    'W': '#0a0a0a',           // correa reloj
-    'w': '#3a4a5a',           // pantalla reloj
-    'O': '#fce200',           // detalle amarillo
+  // ---------- Estado del juego ----------
+  const state = {
+    selectedCharacter: null, // 'victor' | 'nava'
   };
-
-  // ---------- Sprites ----------
-  // Personaje 1: Víctor (barba + jersey beige)
-  const SPRITE_VICTOR = [
-    '................',
-    '.....HHHHHHH....',
-    '....HHHHHHHHH...',
-    '...HHHHHHHHHHH..',
-    '..HHHSSSSSSSHH..',
-    '..HHSSSSSSSSSH..',
-    '..HHSSSSSSSSSH..',
-    '..HHSeeSSSSeeS..',
-    '..HSSSSSSSSSSS..',
-    '..HSSSSnnSSSSS..',
-    '..HSSSBmmBSSSS..',
-    '..HSBBBBBBBBSS..',
-    '...BBBBBBBBBB...',
-    '...JJJJJJJJJJ...',
-    '..JKKKKKKKKKKJ..',
-    '.JKKKKKKKKKKKKJ.',
-    '.JKKKKKKKKKKKKJ.',
-    '.JKKKKKKKKKKKKJ.',
-    '.JKKKKKKKKKKKKJ.',
-    '..JJJJJJJJJJJJ..',
-  ];
-
-  // Personaje 2: Nava (pelo corto + smartwatch)
-  const SPRITE_NAVA = [
-    '................',
-    '......hhhhh.....',
-    '.....hhhhhhh....',
-    '....hhSSSSShh...',
-    '...hSSSSSSSSh...',
-    '..hSSSSSSSSSSh..',
-    '..SSSSSSSSSSSS..',
-    '..SSeeSSSSeeSS..',
-    '..SSSSSSSSSSSS..',
-    '..SSSSnnSSSSSS..',
-    '..SSSBmmBSSSSS..',
-    '..SSBBBBBBSSSS..',
-    '...BBBBBBBBSS...',
-    '...JJJJJJJJJJ...',
-    '..JJJJJJJJJJJJ..',
-    '.JJJJJJJJJJJJJJ.',
-    '.JWwJJJJJJJJJJJ.',
-    '.JJJJJJJJJJJJJJ.',
-    '.JJJJJJJJJJJJJJ.',
-    '..JJJJJJJJJJJJ..',
-  ];
-
-  /** Dibuja un sprite en un canvas */
-  function drawSprite(canvas, sprite, scale) {
-    const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const offsetX = Math.floor((canvas.width - sprite[0].length * scale) / 2);
-    const offsetY = Math.floor((canvas.height - sprite.length * scale) / 2);
-
-    for (let y = 0; y < sprite.length; y++) {
-      for (let x = 0; x < sprite[y].length; x++) {
-        const ch = sprite[y][x];
-        const color = PALETTE[ch];
-        if (!color) continue;
-        ctx.fillStyle = color;
-        ctx.fillRect(offsetX + x * scale, offsetY + y * scale, scale, scale);
-      }
-    }
-  }
-
-  /** Calcula la escala adecuada para encajar el sprite en el canvas */
-  function fitScale(canvas, sprite) {
-    const sx = Math.floor(canvas.width / sprite[0].length);
-    const sy = Math.floor(canvas.height / sprite.length);
-    return Math.max(1, Math.min(sx, sy));
-  }
-
-  // ---------- Render personajes ----------
-  function renderCharacters() {
-    const c1 = document.getElementById('char1');
-    const c2 = document.getElementById('char2');
-    const ci = document.getElementById('char-icon');
-
-    if (c1) drawSprite(c1, SPRITE_VICTOR, fitScale(c1, SPRITE_VICTOR));
-    if (c2) drawSprite(c2, SPRITE_NAVA, fitScale(c2, SPRITE_NAVA));
-    if (ci) drawSprite(ci, SPRITE_VICTOR, fitScale(ci, SPRITE_VICTOR));
-  }
 
   // ---------- Navegación entre pantallas ----------
   const screens = {
     welcome: document.getElementById('welcome-screen'),
     instructions: document.getElementById('instructions-screen'),
+    select: document.getElementById('select-screen'),
   };
 
   function showScreen(name) {
@@ -179,8 +75,7 @@
 
   bindButton('continue-btn', () => {
     playClickSound();
-    // Aquí se enlazará con el primer nivel del juego (próximo paso)
-    alert('Siguiente pantalla en construcción. ¡Pronto!');
+    showScreen('select');
   });
 
   bindButton('back-btn', () => {
@@ -188,17 +83,37 @@
     showScreen('welcome');
   });
 
-  // ---------- Init ----------
-  function init() {
-    renderCharacters();
+  bindButton('select-back-btn', () => {
+    playClickSound();
+    showScreen('instructions');
+  });
+
+  // ---------- Selección de personaje ----------
+  const NAMES = { victor: 'VICTOR', nava: 'NAVA' };
+  const playBtn = document.getElementById('play-btn');
+  const selectedNameEl = document.getElementById('selected-name');
+  const cards = document.querySelectorAll('.char-card');
+
+  function selectCharacter(id) {
+    state.selectedCharacter = id;
+    cards.forEach(c => c.classList.toggle('selected', c.dataset.character === id));
+    if (selectedNameEl) selectedNameEl.textContent = NAMES[id] || '---';
+    if (playBtn) playBtn.disabled = false;
+    beep(740, 0.06, 'square', 0.1);
+    setTimeout(() => beep(880, 0.08, 'square', 0.1), 60);
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  cards.forEach(card => {
+    card.addEventListener('click', (e) => {
+      e.preventDefault();
+      selectCharacter(card.dataset.character);
+    });
+  });
 
-  // re-render si la ventana cambia (orientación)
-  window.addEventListener('resize', renderCharacters);
+  bindButton('play-btn', () => {
+    if (!state.selectedCharacter) return;
+    playStartSound();
+    // Aquí se enlazará con el primer nivel del juego (próximo paso)
+    alert('¡' + NAMES[state.selectedCharacter] + ' listo! Primer nivel en construcción.');
+  });
 })();
