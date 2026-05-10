@@ -60,12 +60,6 @@
         <p class="accent-text">SI TERMINA EL DIA VIVO HABRA GANADO LA PARTIDA.</p>
       </div>
 
-      <div class="instructions-icon">
-        <div class="char-frame small">
-          <img class="char-photo" src="assets/victor.png" alt="Personaje">
-        </div>
-      </div>
-
       <button id="continue-btn" class="pixel-btn">CONTINUAR</button>
       <button id="back-btn" class="pixel-btn ghost">VOLVER</button>
     </section>
@@ -101,6 +95,241 @@
 
       <button id="play-btn" class="pixel-btn" disabled>JUGAR</button>
       <button id="select-back-btn" class="pixel-btn ghost">VOLVER</button>
+    </section>
+
+    <section id="game-screen" class="screen game">
+      <div class="hud">
+        <div class="hud-item hud-bar">
+          <div class="hud-label">BARRIGA</div>
+          <div class="bar-track">
+            <div class="bar-fill" id="fullness-fill"></div>
+            <div class="bar-text"><span id="fullness">0</span>/100</div>
+          </div>
+        </div>
+        <div class="hud-item">VIDAS <span id="lives">3</span></div>
+      </div>
+
+      <div class="game-area" id="game-area">
+        <div class="thrower">
+          <img id="jose-img" src="assets/jose.png" alt="Jose">
+        </div>
+
+        <div class="food-layer" id="food-layer"></div>
+
+        <div class="player" id="player">
+          <div class="face-half face-top">
+            <img class="face-img" id="player-face-top" src="assets/victor-face.png" alt="">
+          </div>
+          <div class="face-half face-bottom" id="player-jaw">
+            <img class="face-img" id="player-face-bottom" src="assets/victor-face.png" alt="">
+          </div>
+        </div>
+
+        <div class="touch-zone left" id="touch-left" aria-label="Mover izquierda"></div>
+        <div class="touch-zone right" id="touch-right" aria-label="Mover derecha"></div>
+
+        <div class="game-overlay" id="game-overlay">
+          <div class="overlay-content">
+            <h2 id="overlay-title">¡LISTO!</h2>
+            <p id="overlay-text">PULSA IZQUIERDA O DERECHA<br>PARA MOVER A TU PERSONAJE</p>
+            <button id="overlay-btn" class="pixel-btn">EMPEZAR</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="game2-screen" class="screen game">
+      <div class="hud">
+        <div class="hud-item hud-bar">
+          <div class="hud-label">CHUPITOS</div>
+          <div class="bar-track">
+            <div class="bar-fill" id="shots-fill"></div>
+            <div class="bar-text"><span id="shots-done">0</span>/8</div>
+          </div>
+        </div>
+        <div class="hud-item">VIDAS <span id="lives2">3</span></div>
+      </div>
+
+      <div class="game-area" id="game2-area">
+        <div class="shots-cluster" id="shots-cluster"></div>
+        <div class="coin-layer" id="coin-layer"></div>
+
+        <div class="force-meter" id="force-meter">
+          <div class="force-label">FUERZA</div>
+          <div class="force-track">
+            <div class="force-fill" id="force-fill"></div>
+          </div>
+        </div>
+
+        <div class="player2" id="player2">
+          <div class="face-half face-top">
+            <img class="face-img" id="p2-face-top" src="assets/victor-face.png" alt="">
+          </div>
+          <div class="face-half face-bottom" id="p2-jaw">
+            <img class="face-img" id="p2-face-bottom" src="assets/victor-face.png" alt="">
+          </div>
+        </div>
+
+        <div class="tap-zone" id="tap-zone"></div>
+
+        <div class="game-overlay" id="game2-overlay">
+          <div class="overlay-content">
+            <h2 id="overlay2-title">PRUEBA 2</h2>
+            <p id="overlay2-text">METE LAS MONEDAS EN<br>8 DE LOS 9 CHUPITOS<br><br>¡EVITA EL MÁS CERCANO!<br><br>1ER TAP: FIJAR POSICIÓN<br>2º TAP: FIJAR FUERZA</p>
+            <button id="overlay2-btn" class="pixel-btn">EMPEZAR</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="game3-screen" class="screen game">
+      <div class="hud">
+        <div class="hud-item">RULETA</div>
+        <div class="hud-item">VIDAS <span id="lives3">3</span></div>
+      </div>
+
+      <div class="game-area roulette-area" id="game3-area">
+
+        <div class="roulette-wrap">
+          <div class="wheel" id="wheel"></div>
+          <div class="wheel-orbit" id="wheel-orbit">
+            <div class="wheel-ball"></div>
+          </div>
+          <div class="wheel-hub"></div>
+        </div>
+
+        <div class="bet-status" id="bet-status">ELIGE UN NÚMERO</div>
+
+        <div class="bet-layout" id="bet-layout"></div>
+
+        <div class="game-overlay" id="game3-overlay">
+          <div class="overlay-content">
+            <h2 id="overlay3-title">PRUEBA 3 — RULETA</h2>
+            <p id="overlay3-text">ELIGE UN NÚMERO DEL TAPETE.<br>LA RULETA GIRARÁ SOLA.<br><br>SI SALE TU NÚMERO,<br>PASAS DE PRUEBA.<br><br>SI SALE EL 0,<br>PIERDES UNA VIDA.</p>
+            <button id="overlay3-btn" class="pixel-btn">EMPEZAR</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="game4-screen" class="screen game">
+      <div class="hud">
+        <div class="hud-item hud-bar">
+          <div class="hud-label">RUTA AL GARITO</div>
+          <div class="bar-track">
+            <div class="bar-fill" id="route-fill"></div>
+            <div class="bar-text"><span id="route-pct">0</span>%</div>
+          </div>
+        </div>
+        <div class="hud-item">VIDAS <span id="lives4">3</span></div>
+      </div>
+
+      <div class="game-area runner-area" id="game4-area">
+        <div class="road" id="road"></div>
+
+        <div class="landmark landmark-start" id="landmark-start">
+          <div class="landmark-sign codere">CODERE</div>
+        </div>
+        <div class="landmark landmark-end" id="landmark-end">
+          <div class="landmark-sign garito">GARITO</div>
+        </div>
+
+        <div class="obstacles" id="obstacles"></div>
+
+        <div class="player4" id="player4">
+          <div class="face-half face-top">
+            <img class="face-img" id="p4-face-top" src="assets/victor-face.png" alt="">
+          </div>
+          <div class="face-half face-bottom" id="p4-jaw">
+            <img class="face-img" id="p4-face-bottom" src="assets/victor-face.png" alt="">
+          </div>
+        </div>
+
+        <div class="touch-zone left" id="touch4-left"></div>
+        <div class="touch-zone right" id="touch4-right"></div>
+
+        <div class="game-overlay" id="game4-overlay">
+          <div class="overlay-content">
+            <h2 id="overlay4-title">PRUEBA 4 — RUMBO AL GARITO</h2>
+            <p id="overlay4-text">SAL DE CODERE Y LLEGA AL GARITO.<br>ESQUIVA PIEDRAS, CHARCOS, AGUJEROS,<br>GATOS, SEÑALES Y PLANTAS.<br><br>IZQUIERDA / DERECHA O FLECHAS</p>
+            <button id="overlay4-btn" class="pixel-btn">EMPEZAR</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="game5-screen" class="screen game">
+      <div class="hud">
+        <div class="hud-item hud-bar">
+          <div class="hud-label">URINA</div>
+          <div class="bar-track">
+            <div class="bar-fill" id="urine-fill"></div>
+            <div class="bar-text"><span id="urine-pct">0</span>%</div>
+          </div>
+        </div>
+        <div class="hud-item">
+          T <span id="time5">30</span>
+        </div>
+      </div>
+
+      <div class="game-area toilet-area" id="game5-area">
+        <div class="toilet" id="toilet"></div>
+        <div class="drops-layer" id="drops-layer"></div>
+
+        <div class="aim-line" id="aim-line"></div>
+
+        <div class="weapon-base" id="weapon-base">
+          <div class="weapon-pivot" id="weapon-pivot"></div>
+        </div>
+
+        <div class="player5">
+          <img class="player5-face" id="p5-face" src="assets/victor-face.png" alt="">
+        </div>
+
+        <div class="touch-zone left" id="touch5-left"></div>
+        <div class="touch-zone right" id="touch5-right"></div>
+
+        <div class="game-overlay" id="game5-overlay">
+          <div class="overlay-content">
+            <h2 id="overlay5-title">PRUEBA FINAL</h2>
+            <p id="overlay5-text">LLENA EL WC EN<br>30 SEGUNDOS<br><br>IZQUIERDA / DERECHA<br>PARA APUNTAR</p>
+            <button id="overlay5-btn" class="pixel-btn">EMPEZAR</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ending-win" class="screen ending">
+      <div class="scanlines"></div>
+      <div class="stars"></div>
+      <h1 class="title">
+        <span class="line">¡FELIZ</span>
+        <span class="line accent">39 CUMPLEAÑOS!</span>
+      </h1>
+      <div class="ending-body">
+        <p>HAS COMPLETADO UN DÍA<br>DURO DEL BIWENGER</p>
+        <p class="accent-text">¡ESTÁS PREPARADO PARA<br>CELEBRAR OTRO!</p>
+        <div class="confetti">
+          <span>🎉</span><span>🎂</span><span>🎉</span><span>🎂</span><span>🎉</span>
+        </div>
+      </div>
+      <button id="ending-win-btn" class="pixel-btn">JUGAR DE NUEVO</button>
+    </section>
+
+    <section id="ending-loss" class="screen ending">
+      <div class="scanlines"></div>
+      <h1 class="title">
+        <span class="line accent-2">FIN DEL DÍA</span>
+      </h1>
+      <div class="ending-body">
+        <p>NO HAS SUPERADO<br>LA CENA DEL BIWENGER</p>
+        <p>ACABASTE BORRACHO<br>EN CASA DE KIKE,<br>COMO EN LAS FOTOS</p>
+      </div>
+      <div class="ending-photos">
+        <img src="assets/victor.png" alt="Victor borracho">
+        <img src="assets/nava.png" alt="Nava borracho">
+      </div>
+      <button id="ending-loss-btn" class="pixel-btn">REINTENTAR</button>
     </section>
 
   </div>

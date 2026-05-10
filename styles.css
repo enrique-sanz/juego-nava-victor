@@ -194,15 +194,6 @@ canvas {
   position: relative;
 }
 
-.char-frame.small {
-  width: 80px;
-  height: 80px;
-  box-shadow:
-    0 0 0 4px #000,
-    0 0 0 8px var(--accent),
-    4px 4px 0 8px rgba(0, 0, 0, 0.6);
-}
-
 .char-photo {
   width: 100%;
   height: 100%;
@@ -354,14 +345,6 @@ canvas {
   text-shadow: 1px 1px 0 #000;
 }
 
-.instructions-icon {
-  z-index: 2;
-}
-
-.instructions-icon .char-frame {
-  animation: bob 2s ease-in-out infinite;
-}
-
 /* ===== Pantalla selección de personaje ===== */
 .select-hint {
   font-size: 0.55rem;
@@ -497,6 +480,1013 @@ canvas {
   transform: none;
 }
 
+/* ===== Pantalla de Juego (Arkanoid de comida) ===== */
+.screen.game {
+  padding: 0;
+  justify-content: stretch;
+  align-items: stretch;
+  max-width: 480px;
+}
+
+.hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 14px;
+  z-index: 10;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+  pointer-events: none;
+}
+
+.hud-item {
+  color: var(--primary);
+  text-shadow: 1px 1px 0 #000, 2px 2px 0 var(--blue-dark);
+}
+
+.hud-item span {
+  color: var(--accent);
+  margin-left: 6px;
+}
+
+.hud-bar {
+  flex: 1;
+  margin-right: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hud-label {
+  font-size: 0.55rem;
+  color: var(--accent);
+  letter-spacing: 1px;
+}
+
+.bar-track {
+  position: relative;
+  height: 14px;
+  background: #000;
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 0 2px #000, inset 1px 1px 0 rgba(255,255,255,0.1);
+  overflow: hidden;
+}
+
+.bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  background: linear-gradient(to right, #00e436, #fce200, #ff8800);
+  transition: width 0.25s ease-out;
+  /* tramos pixelados */
+  background-size: 200% 100%;
+  background-position: left;
+}
+
+.bar-fill.full {
+  background: linear-gradient(to right, #ff3860, #fce200);
+  animation: bar-glow 0.4s ease-in-out infinite alternate;
+}
+
+@keyframes bar-glow {
+  from { box-shadow: 0 0 4px var(--accent); }
+  to { box-shadow: 0 0 12px var(--accent), 0 0 18px var(--accent-2); }
+}
+
+.bar-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.5rem;
+  color: #fff;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+  letter-spacing: 1px;
+}
+
+.game-area {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(to bottom, #0a0a2a 0%, #1a1a4e 60%, #2a1a3e 100%);
+  overflow: hidden;
+}
+
+.thrower {
+  position: absolute;
+  top: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  pointer-events: none;
+  animation: thrower-bob 1.6s ease-in-out infinite;
+}
+
+.thrower img {
+  height: 22vh;
+  max-height: 180px;
+  width: auto;
+  filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.6));
+  display: block;
+}
+
+@keyframes thrower-bob {
+  0%, 100% { transform: translateX(-50%) translateY(0) rotate(-1deg); }
+  50% { transform: translateX(-50%) translateY(-4px) rotate(1deg); }
+}
+
+/* Capa de comida cayendo (delante del jugador para que se vea entrando en la boca) */
+.food-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.food-item {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  will-change: transform;
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.7));
+}
+
+.food-item canvas {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+.food-item.caught {
+  animation: caught-fx 0.25s ease-out forwards;
+}
+.food-item.missed {
+  animation: missed-fx 0.3s ease-out forwards;
+}
+
+.floating-points {
+  position: absolute;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  color: var(--accent);
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 2px 2px 0 var(--blue-dark);
+  pointer-events: none;
+  z-index: 6;
+  animation: float-up 0.7s ease-out forwards;
+  white-space: nowrap;
+  transform: translate(-50%, 0);
+}
+
+.floating-points.special {
+  color: var(--pink);
+  font-size: 1rem;
+  text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 0 0 8px var(--pink);
+}
+
+@keyframes float-up {
+  0% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -40px) scale(1.3); opacity: 0; }
+}
+
+@keyframes caught-fx {
+  0% { transform: scale(1) rotate(0); opacity: 1; }
+  100% { transform: scale(1.6) rotate(15deg); opacity: 0; }
+}
+@keyframes missed-fx {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.4); opacity: 0; }
+}
+
+/* Jugador (cara con boca animable) */
+.player {
+  position: absolute;
+  bottom: 4vh;
+  left: 50%;
+  width: 110px;
+  height: 150px;
+  transform: translateX(-50%);
+  z-index: 4;
+  will-change: left, transform;
+  transition: transform 0.05s linear;
+}
+
+.face-half {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.face-top {
+  top: 0;
+  /* muestra la mitad superior (hasta la boca al 65%) */
+  clip-path: inset(0 0 35% 0);
+}
+
+.face-bottom {
+  top: 0;
+  clip-path: inset(65% 0 0 0);
+  transform-origin: top center;
+  transition: transform 0.12s ease-out;
+}
+
+.face-bottom.eating {
+  transform: translateY(8px);
+}
+
+.face-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  /* foto real, no pixelar */
+  image-rendering: auto;
+  filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.6));
+}
+
+/* Zonas táctiles */
+.touch-zone {
+  position: absolute;
+  top: 25%;
+  bottom: 0;
+  width: 50%;
+  z-index: 6;
+  /* sutil indicación visual */
+  background: transparent;
+  transition: background 0.1s ease;
+}
+.touch-zone.left { left: 0; }
+.touch-zone.right { right: 0; }
+
+.touch-zone.active {
+  background: radial-gradient(ellipse at center, rgba(252,226,0,0.12), transparent 70%);
+}
+
+.touch-zone::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  opacity: 0.25;
+  transform: translateY(-50%);
+}
+.touch-zone.left::after {
+  left: 14px;
+  border-width: 14px 22px 14px 0;
+  border-color: transparent var(--primary) transparent transparent;
+}
+.touch-zone.right::after {
+  right: 14px;
+  border-width: 14px 0 14px 22px;
+  border-color: transparent transparent transparent var(--primary);
+}
+
+/* Overlay (instrucciones / pausa / fin) */
+.game-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 5vh 6vw;
+  transition: opacity 0.3s ease;
+}
+
+.game-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.overlay-content {
+  max-width: 320px;
+}
+
+.overlay-content h2 {
+  font-size: 1.4rem;
+  color: var(--accent);
+  margin-bottom: 16px;
+  text-shadow: 2px 2px 0 #000, 3px 3px 0 var(--blue-dark);
+}
+
+.overlay-content p {
+  font-size: 0.65rem;
+  line-height: 1.8;
+  margin-bottom: 22px;
+  letter-spacing: 1px;
+}
+
+/* ===== Pantalla 2: Chupitos ===== */
+.shots-cluster {
+  position: absolute;
+  top: 14%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  height: 240px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+@media (max-width: 380px) {
+  .shots-cluster { width: 240px; height: 220px; }
+}
+
+.shot {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  transform: translate(-50%, -50%);
+}
+
+.shot canvas {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.7));
+}
+
+.shot.danger canvas {
+  filter: drop-shadow(0 0 6px var(--accent-2)) drop-shadow(2px 2px 0 rgba(0,0,0,0.7));
+}
+
+.shot.danger::after {
+  content: '⚠';
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--accent-2);
+  font-size: 1rem;
+  text-shadow: 1px 1px 0 #000;
+  animation: blink 0.6s steps(2) infinite;
+}
+
+.shot.filled canvas {
+  filter: drop-shadow(0 0 4px var(--accent)) drop-shadow(2px 2px 0 rgba(0,0,0,0.7));
+}
+
+.coin-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.coin {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  will-change: transform;
+}
+
+.coin canvas {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.8));
+}
+
+/* Barra de fuerza */
+.force-meter {
+  position: absolute;
+  right: 14px;
+  top: 14%;
+  height: 56%;
+  width: 28px;
+  z-index: 6;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+}
+
+.force-meter.active { display: flex; }
+
+.force-label {
+  font-size: 0.5rem;
+  color: var(--accent);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.force-track {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  background: #000;
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 0 2px #000;
+  overflow: hidden;
+}
+
+.force-fill {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 0%;
+  background: linear-gradient(to top, #00e436 0%, #fce200 50%, #ff3860 100%);
+  background-size: 100% 200%;
+  background-position: bottom;
+  transition: none;
+}
+
+.force-fill.locked {
+  animation: force-flash 0.3s steps(2) 3;
+}
+@keyframes force-flash {
+  50% { opacity: 0.3; }
+}
+
+/* Jugador en pantalla 2 (igual cara, sin movimiento manual) */
+.player2 {
+  position: absolute;
+  bottom: 4vh;
+  left: 50%;
+  width: 110px;
+  height: 150px;
+  transform: translateX(-50%);
+  z-index: 4;
+  will-change: left;
+}
+
+/* Aim line */
+.aim-line {
+  position: absolute;
+  bottom: calc(4vh + 130px);
+  left: 50%;
+  width: 4px;
+  background: repeating-linear-gradient(
+    to top,
+    var(--accent) 0 4px,
+    transparent 4px 8px
+  );
+  z-index: 3;
+  pointer-events: none;
+  transform: translateX(-50%);
+  display: none;
+}
+
+.aim-line.active { display: block; }
+
+.tap-zone {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  cursor: pointer;
+}
+
+/* Animaciones aplicadas al canvas interno, NO al .coin (que tiene
+   transform inline para posicionar y choca con cualquier transform de animación). */
+.coin.entering canvas {
+  animation: coin-drop 0.4s ease-in forwards;
+}
+@keyframes coin-drop {
+  0%   { opacity: 1; transform: scale(1); }
+  60%  { transform: scale(0.9); }
+  100% { opacity: 0; transform: scale(0.5) translateY(20px); }
+}
+
+.coin.miss canvas {
+  animation: coin-fade 2s ease-in forwards;
+}
+@keyframes coin-fade {
+  0%   { opacity: 1; transform: scale(1); filter: brightness(1); }
+  60%  { opacity: 1; transform: scale(1); filter: brightness(0.85); }
+  100% { opacity: 0; transform: scale(0.7); filter: brightness(0.5) blur(2px); }
+}
+
+/* ===== Pantalla 3: Ruleta ===== */
+.roulette-area {
+  background:
+    radial-gradient(ellipse at top, #0a3a1a 0%, #062c14 60%, #03190a 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 56px 12px 12px;
+}
+
+.roulette-wrap {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin: 12px 0 8px;
+  flex-shrink: 0;
+}
+
+.wheel {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle,
+      #2a1810 0%,
+      #2a1810 30%,
+      #5a2818 31%,
+      #5a2818 65%,
+      #d4af37 67%,
+      #aa7700 100%);
+  box-shadow:
+    0 0 0 5px #5a2818,
+    0 0 0 10px #2a1810,
+    inset 0 0 22px rgba(0, 0, 0, 0.8),
+    0 6px 14px rgba(0, 0, 0, 0.6);
+}
+
+.wheel-num {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem;
+  color: #fff;
+  text-shadow: 1px 1px 0 #000;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.5);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 2px rgba(0,0,0,0.6);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.wheel-num.red   { background: #c41e3a; }
+.wheel-num.black { background: #1a1a1a; }
+.wheel-num.green { background: #128c3a; }
+
+.wheel-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  z-index: 4;
+  pointer-events: none;
+  transform: rotate(0deg);
+}
+
+.wheel-orbit.spinning {
+  transition: transform 4.2s cubic-bezier(0.17, 0.7, 0.22, 1.0);
+}
+
+.wheel-ball {
+  position: absolute;
+  top: -98px;
+  left: -6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ffffff 0%, #e0e0e0 60%, #888 100%);
+  box-shadow:
+    0 0 6px rgba(255,255,255,0.6),
+    0 2px 4px rgba(0,0,0,0.7);
+}
+
+.wheel-hub {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fce200 0%, #c89010 60%, #5a3a08 100%);
+  box-shadow:
+    0 0 0 2px #2a1810,
+    0 0 0 4px #d4af37,
+    inset 0 1px 2px rgba(255,255,255,0.4),
+    0 2px 4px rgba(0,0,0,0.6);
+  z-index: 3;
+}
+
+.bet-status {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  color: var(--accent);
+  text-shadow: 1px 1px 0 #000;
+  margin: 6px 0 8px;
+  text-align: center;
+  height: 14px;
+  z-index: 2;
+}
+
+.bet-status.spinning { color: var(--primary); animation: blink 0.4s steps(2) infinite; }
+.bet-status.win      { color: var(--green); }
+.bet-status.lose     { color: var(--accent-2); }
+
+.bet-layout {
+  display: grid;
+  grid-template-columns: 36px repeat(3, 1fr);
+  grid-template-rows: repeat(12, 1fr);
+  gap: 2px;
+  width: calc(100% - 16px);
+  max-width: 360px;
+  flex: 1;
+  background: #062c14;
+  padding: 4px;
+  border: 3px solid #d4af37;
+  box-shadow: 0 0 0 2px #000, inset 0 0 8px rgba(0,0,0,0.6);
+  z-index: 2;
+  margin-bottom: 8px;
+}
+
+.bet-cell {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  color: #fff;
+  background: #1a1a1a;
+  border: 1px solid #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-shadow: 1px 1px 0 #000;
+  transition: transform 0.06s ease, box-shadow 0.06s ease;
+  position: relative;
+  padding: 0;
+  min-height: 24px;
+}
+
+.bet-cell.red    { background: #c41e3a; border-color: #8a1428; }
+.bet-cell.black  { background: #1a1a1a; border-color: #444; }
+.bet-cell.zero   {
+  background: #128c3a;
+  border-color: #0a5a24;
+  grid-column: 1;
+  grid-row: 1 / 13;
+  font-size: 1.1rem;
+}
+
+.bet-cell:active { transform: scale(0.95); }
+
+.bet-cell.locked { pointer-events: none; opacity: 0.45; }
+
+.bet-cell.selected {
+  box-shadow: 0 0 0 3px var(--accent), 0 0 12px var(--accent);
+  z-index: 3;
+}
+
+
+/* ===== Pantalla 4: Runner Codere → Garito ===== */
+.runner-area {
+  background: #1a1a1a;
+  overflow: hidden;
+}
+
+.road {
+  position: absolute;
+  inset: 0;
+  background:
+    /* línea discontinua central */
+    repeating-linear-gradient(to bottom,
+      #fff5b3 0 20px,
+      transparent 20px 60px),
+    /* asfalto base */
+    linear-gradient(to right,
+      #1a1a1f 0 6%,
+      #2c2c34 8%,
+      #2c2c34 92%,
+      #1a1a1f 94% 100%);
+  background-size: 4px 60px, 100% 100%;
+  background-position: center 0, 0 0;
+  background-repeat: repeat-y, no-repeat;
+  z-index: 1;
+}
+
+.road::before, .road::after {
+  /* bordillos */
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 14px;
+  background:
+    repeating-linear-gradient(to bottom,
+      #888 0 30px,
+      #aaa 30px 31px,
+      #888 31px 60px);
+  border: 2px solid #555;
+}
+.road::before { left: 0; }
+.road::after { right: 0; }
+
+.landmark {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+  transition: transform 0.05s linear;
+}
+
+.landmark-start { top: 0; }
+.landmark-end   { top: 0; transform: translateY(-200px); }
+
+.landmark-sign {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.1rem;
+  letter-spacing: 3px;
+  padding: 14px 22px;
+  border: 4px solid #fff;
+  box-shadow:
+    0 0 0 4px #000,
+    inset 4px 4px 0 rgba(255,255,255,0.15),
+    inset -4px -4px 0 rgba(0,0,0,0.3),
+    8px 8px 0 rgba(0,0,0,0.5);
+  text-shadow: 2px 2px 0 #000;
+}
+
+.landmark-sign.codere {
+  background: #00b14f;
+  color: #fff;
+}
+.landmark-sign.garito {
+  background: #ff3860;
+  color: #fff;
+  animation: garito-glow 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes garito-glow {
+  from { box-shadow: 0 0 0 4px #000, inset 4px 4px 0 rgba(255,255,255,0.15), inset -4px -4px 0 rgba(0,0,0,0.3), 8px 8px 0 rgba(0,0,0,0.5); }
+  to   { box-shadow: 0 0 0 4px #000, 0 0 22px var(--accent), inset 4px 4px 0 rgba(255,255,255,0.25), inset -4px -4px 0 rgba(0,0,0,0.3), 8px 8px 0 rgba(0,0,0,0.5); }
+}
+
+.obstacles {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.obstacle {
+  position: absolute;
+  will-change: transform;
+}
+
+.obstacle canvas {
+  display: block;
+  image-rendering: pixelated;
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.6));
+}
+
+.player4 {
+  position: absolute;
+  bottom: 6vh;
+  left: 50%;
+  width: 96px;
+  height: 132px;
+  transform: translateX(-50%);
+  z-index: 4;
+  will-change: left;
+}
+
+.player4.hit {
+  animation: player-hit 0.5s steps(2);
+}
+
+@keyframes player-hit {
+  50% { opacity: 0.3; filter: hue-rotate(180deg); }
+}
+
+/* ===== Helper genérico para emoji centrado ===== */
+.emoji-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.5));
+}
+
+/* En el chupito el emoji va relativo (para overlay de moneda absoluto) */
+.shot { position: absolute; }
+.shot-glass { position: absolute; inset: 0; }
+.shot-coin-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  /* moneda asomando dentro */
+  transform: translateY(-6px) scale(0.7);
+  animation: coin-settle 0.5s ease-out;
+}
+@keyframes coin-settle {
+  from { transform: translateY(-30px) scale(0.4); opacity: 0; }
+  to   { transform: translateY(-6px) scale(0.7); opacity: 1; }
+}
+
+/* Obstáculo y comida con emoji ya escala bien sin drop-shadow doble */
+.food-item .emoji-icon,
+.obstacle .emoji-icon { filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.6)); }
+
+/* ===== Pantalla 5: Toilet shooter ===== */
+.toilet-area {
+  background:
+    linear-gradient(to bottom, #1c2440 0%, #2a304a 50%, #322a3e 100%);
+  overflow: hidden;
+}
+
+.toilet {
+  position: absolute;
+  top: 56px;
+  left: 0;
+  width: 96px;
+  height: 96px;
+  z-index: 3;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+
+.toilet-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+  filter: drop-shadow(3px 3px 0 rgba(0, 0, 0, 0.7));
+}
+
+.drops-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.drop {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+  filter: drop-shadow(0 0 4px rgba(255,255,255,0.5));
+}
+
+.drop.hit {
+  animation: drop-splash 0.3s ease-out forwards;
+}
+@keyframes drop-splash {
+  to { transform: scale(1.6); opacity: 0; }
+}
+
+.aim-line {
+  position: absolute;
+  bottom: 16vh;
+  left: 50%;
+  width: 3px;
+  height: 70vh;
+  background: linear-gradient(to top,
+    rgba(252,226,0,0.7) 0%,
+    rgba(252,226,0,0.1) 70%,
+    transparent 100%);
+  transform-origin: bottom center;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.weapon-base {
+  position: absolute;
+  bottom: 14vh;
+  left: 50%;
+  width: 0;
+  height: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.weapon-pivot {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  transform-origin: 50% 100%;
+  transition: transform 0.05s linear;
+}
+
+.weapon-canvas {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: block;
+  image-rendering: pixelated;
+  filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.7));
+  pointer-events: none;
+}
+
+.player5 {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  width: 130px;
+  height: 130px;
+  transform: translateX(-50%) rotate(180deg);
+  z-index: 4;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.player5-face {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  image-rendering: auto;
+}
+
+/* ===== Pantallas finales (endings) ===== */
+.screen.ending {
+  justify-content: space-around;
+}
+
+.ending-body {
+  z-index: 2;
+  font-size: clamp(0.65rem, 2.8vw, 0.85rem);
+  line-height: 2;
+  text-align: center;
+}
+
+.ending-body p { margin-bottom: 14px; }
+
+.confetti {
+  margin-top: 16px;
+  font-size: 1.6rem;
+  letter-spacing: 12px;
+  animation: bob 1.4s ease-in-out infinite;
+}
+
+.ending-photos {
+  display: flex;
+  gap: 10px;
+  z-index: 2;
+}
+
+.ending-photos img {
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  border: 4px solid var(--primary);
+  box-shadow: 0 0 0 4px #000, 4px 4px 0 4px rgba(0,0,0,0.5);
+}
+
+/* Toast de mensaje */
+.game-toast {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: var(--accent-2);
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.75rem;
+  text-align: center;
+  padding: 16px 18px;
+  line-height: 1.7;
+  letter-spacing: 1px;
+  box-shadow:
+    0 0 0 4px #000,
+    0 0 0 8px var(--accent),
+    8px 8px 0 8px rgba(0,0,0,0.5);
+  z-index: 50;
+  max-width: 80%;
+  text-shadow: 2px 2px 0 #000;
+  animation: toast-pop 1.8s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes toast-pop {
+  0%   { transform: translate(-50%, -50%) scale(0) rotate(-10deg); }
+  20%  { transform: translate(-50%, -50%) scale(1.1) rotate(2deg); }
+  30%  { transform: translate(-50%, -50%) scale(1) rotate(0); }
+  85%  { transform: translate(-50%, -50%) scale(1) rotate(0); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0.9) rotate(0); opacity: 0; }
+}
+
 /* ===== Responsive: pantallas más pequeñas ===== */
 @media (max-height: 640px) {
   .screen { padding: 3vh 5vw; }
@@ -507,7 +1497,6 @@ canvas {
 
 @media (max-height: 540px) {
   .char-frame { width: 72px; height: 72px; }
-  .char-frame.small { width: 60px; height: 60px; }
   .zzz { top: -20px; }
   .pixel-btn { padding: 12px 16px; }
   .char-face-frame { width: 80px; height: 100px; }
