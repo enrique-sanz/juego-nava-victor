@@ -1328,7 +1328,7 @@
     1, 3, 5, 7, 9, 12, 14, 16, 18,
     19, 21, 23, 25, 27, 30, 32, 34, 36,
   ]);
-  const HOT_NUMBERS = [8, 22]; // probabilidad ×3 (no se marca visualmente)
+  const HOT_NUMBERS = [8, 22]; // probabilidad ×10 (no se marca visualmente)
 
   // Orden estándar de la ruleta europea (37 slots)
   const WHEEL_ORDER = [
@@ -1413,11 +1413,11 @@
     spinRoulette(n);
   }
 
-  /** Selecciona un resultado con pesos: 8 y 22 ×3, resto ×1 */
+  /** Selecciona un resultado con pesos: 8 y 22 ×10, resto ×1 */
   function pickRouletteResult() {
     const weights = new Array(37).fill(1);
-    HOT_NUMBERS.forEach(n => weights[n] = 3);
-    const total = weights.reduce((a, b) => a + b, 0); // 41
+    HOT_NUMBERS.forEach(n => weights[n] = 10);
+    const total = weights.reduce((a, b) => a + b, 0); // 35 + 20 = 55
     let r = Math.random() * total;
     for (let i = 0; i < weights.length; i++) {
       r -= weights[i];
