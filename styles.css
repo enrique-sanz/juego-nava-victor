@@ -1334,14 +1334,19 @@ canvas {
 
 .drop {
   position: absolute;
-  width: 22px;
-  height: 22px;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 14px;
+  height: 18px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background:
+    radial-gradient(ellipse at 35% 28%,
+      #fffac0 0%,
+      #fce200 45%,
+      #c89000 95%);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.6),
+    inset -1px -1px 0 rgba(120, 80, 0, 0.4);
+  filter: drop-shadow(0 0 3px rgba(252, 226, 0, 0.6));
   will-change: transform;
-  filter: drop-shadow(0 0 4px rgba(255,255,255,0.5));
 }
 
 .drop.hit {

@@ -2036,32 +2036,33 @@
     'H': '#a07058',          // hand shadow
   };
 
-  // Glans arriba, shaft, manos al final (pivote bottom-center)
+  // Anatomía: glans bulboso, corona, shaft con sombras laterales, manos abajo
+  // Pivote bottom-center (transform-origin: 50% 100%)
   const WEAPON_SPRITE = [
-    '......kkkk......',
-    '.....kPPPPk.....',
-    '....kPccccPk....',
-    '...kPcPPPPcPk...',
-    '...kPPPPPPPPk...',
-    '...kPPPPPPPPk...',
-    '...kPPPPPPPPk...',
-    '....kPdPPPdk....',
-    '.....kkkkkkk....',
-    '......kPPk......',
-    '......kPPk......',
-    '......kPdk......',
-    '......kPdk......',
-    '......kPdk......',
-    '......kPdk......',
-    '....kkkkkkkk....',
-    '...khhhhhhhhk...',
-    '..khhPPPPPPhhk..',
-    '..khHhhhhhhHhk..',
-    '..khhhhhhhhhhk..',
-    '...kPPPPPPPPk...',
-    '....kkkkkkkk....',
-    '................',
-    '................',
+    '......kkkk......',  // 0  punta
+    '.....kPPPPk.....',  // 1
+    '....kPcPPcPk....',  // 2  glans (highlights c)
+    '...kPccPPccPk...',  // 3
+    '...kPPPPPPPPk...',  // 4
+    '..kPPPPPPPPPPk..',  // 5  parte ancha del glans
+    '..kPPPPPPPPPPk..',  // 6
+    '..kPPdPPPPdPPk..',  // 7  sombras laterales del glans
+    '...kPPPPPPPPk...',  // 8
+    '...kddddddddk...',  // 9  corona (anillo más oscuro)
+    '....kPPPPPPk....',  // 10 shaft empieza más estrecho
+    '....kPPPPPPk....',  // 11
+    '....kPdPPdPk....',  // 12 sombras laterales del shaft
+    '....kPdPPdPk....',  // 13
+    '....kPdPPdPk....',  // 14
+    '....kPdPPdPk....',  // 15
+    '....kPPPPPPk....',  // 16
+    '...kkkkkkkkkk...',  // 17 borde superior de la mano
+    '..khhhhhhhhhhk..',  // 18
+    '.khhPPPPPPPPhhk.',  // 19 manos sujetando (PP = shaft entre dedos)
+    '.khHPPPPPPPPHhk.',  // 20 nudillos (H)
+    '.khhhhhhhhhhhhk.',  // 21
+    '..kPPPPPPPPPPk..',  // 22 muñeca
+    '...kkkkkkkkkk...',  // 23 base (pivote)
   ];
 
   const ROUND5_DURATION = 30;       // s
@@ -2133,14 +2134,13 @@
 
     const el = document.createElement('div');
     el.className = 'drop';
-    el.textContent = '💧';
-    el.style.transform = `translate(${tipX - 11}px, ${tipY - 11}px)`;
+    el.style.transform = `translate(${tipX - 7}px, ${tipY - 9}px)`;
     layer.appendChild(el);
 
     state5.drops.push({
       el,
-      x: tipX - 11,
-      y: tipY - 11,
+      x: tipX - 7,
+      y: tipY - 9,
       vx: Math.sin(rad) * DROP_SPEED,
       vy: -Math.cos(rad) * DROP_SPEED,
       dead: false,
@@ -2167,8 +2167,8 @@
       d.y += d.vy * dt;
       d.el.style.transform = `translate(${d.x}px, ${d.y}px)`;
 
-      const dropCx = d.x + 11;
-      const dropCy = d.y + 11;
+      const dropCx = d.x + 7;
+      const dropCy = d.y + 9;
 
       // colisión con el inodoro
       const inX = Math.abs(dropCx - toiletCx) < toiletHalfW;
