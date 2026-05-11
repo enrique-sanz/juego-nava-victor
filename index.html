@@ -190,12 +190,14 @@
 
       <div class="game-area roulette-area" id="game3-area">
 
-        <div class="roulette-wrap">
-          <div class="wheel" id="wheel"></div>
-          <div class="wheel-orbit" id="wheel-orbit">
-            <div class="wheel-ball"></div>
+        <div class="roulette-stage">
+          <div class="roulette-wrap">
+            <div class="wheel" id="wheel"></div>
+            <div class="wheel-orbit" id="wheel-orbit">
+              <div class="wheel-ball"></div>
+            </div>
+            <div class="wheel-hub"></div>
           </div>
-          <div class="wheel-hub"></div>
         </div>
 
         <div class="bet-status" id="bet-status">ELIGE UN NÚMERO</div>
@@ -228,13 +230,29 @@
         <div class="road" id="road"></div>
 
         <div class="landmark landmark-start" id="landmark-start">
-          <div class="landmark-sign codere">CODERE</div>
+          <img class="landmark-image codere" src="assets/codere.png" alt="CODERE">
         </div>
         <div class="landmark landmark-end" id="landmark-end">
-          <div class="landmark-sign garito">GARITO</div>
+          <div class="bar-facade">
+            <div class="bar-front">
+              <img class="bar-sign" src="assets/garitobar.png" alt="GaritoBar">
+              <div class="bar-front-detail bar-front-left"></div>
+              <div class="bar-door-wrap">
+                <div class="bar-interior"></div>
+                <div class="bar-door" id="bar-door">
+                  <div class="bar-door-handle"></div>
+                </div>
+              </div>
+              <div class="bar-front-detail bar-front-right"></div>
+            </div>
+          </div>
         </div>
 
         <div class="obstacles" id="obstacles"></div>
+
+        <div class="jose-runner" id="jose-runner">
+          <img src="assets/jose.png" alt="Jose">
+        </div>
 
         <div class="player4" id="player4">
           <div class="face-half face-top">

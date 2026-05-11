@@ -1376,23 +1376,30 @@
     }
   }
 
-  /** Crea los 37 chips numerados alrededor de la rueda */
+  /** Pinta los 37 gajos con conic-gradient y coloca los números en el borde exterior */
   function buildWheel() {
     const wheel = document.getElementById('wheel');
     if (!wheel) return;
-    // limpia solo los chips existentes (preserva pseudo-elements)
     wheel.querySelectorAll('.wheel-num').forEach(n => n.remove());
 
-    const radius = 86;  // radio donde se colocan los chips
+    const COLOR_MAP = { red: '#c41e3a', black: '#1a1a1a', green: '#128c3a' };
+    const stops = WHEEL_ORDER.map((n, i) => {
+      const start = i * SLOT_ANGLE;
+      const end = (i + 1) * SLOT_ANGLE;
+      return `${COLOR_MAP[colorOf(n)]} ${start}deg ${end}deg`;
+    });
+    // from -SLOT_ANGLE/2 → el gajo 0 queda centrado arriba (12 en punto)
+    wheel.style.background =
+      `conic-gradient(from ${-SLOT_ANGLE / 2}deg, ${stops.join(', ')})`;
+
+    const radius = 96; // borde exterior del gajo
     WHEEL_ORDER.forEach((n, i) => {
-      const angle = i * SLOT_ANGLE;       // 0° = arriba, sentido horario
+      const angle = i * SLOT_ANGLE;
       const chip = document.createElement('div');
-      chip.className = 'wheel-num ' + colorOf(n);
+      chip.className = 'wheel-num';
       chip.textContent = String(n);
-      // truco: rotate(angle) translate(-radius) rotate(-angle) coloca el chip
-      // a `radius` px del centro en la dirección `angle` y mantiene el texto recto
-      chip.style.transform =
-        `rotate(${angle}deg) translateY(-${radius}px) rotate(${-angle}deg)`;
+      // sin el rotate(-angle) final: el número queda orientado radialmente
+      chip.style.transform = `rotate(${angle}deg) translateY(-${radius}px)`;
       wheel.appendChild(chip);
     });
   }
@@ -1723,7 +1730,47 @@
     rafId: null,
     lastTime: 0,
     bgY: 0,
+    joseVisible: false,
+    joseFoodTimer: 0,
+    joseFoodInterval: 700,  // ms entre comidas que lanza Jose
   };
+
+  const FOOD_TYPES_LIST = Object.keys(FOOD_EMOJI);
+
+  /** Jose lanza una comida desde su posición (derecha) hacia el centro/izquierda */
+  function spawnJoseFood() {
+    const layer = getObstaclesLayer();
+    const area = getGame4Area();
+    const jose = document.getElementById('jose-runner');
+    if (!layer || !area || !jose) return;
+
+    const w = 52, h = 52;
+    const type = FOOD_TYPES_LIST[Math.floor(Math.random() * FOOD_TYPES_LIST.length)];
+
+    const el = document.createElement('div');
+    el.className = 'obstacle jose-food';
+    el.style.width = w + 'px';
+    el.style.height = h + 'px';
+    el.appendChild(makeEmojiEl(FOOD_EMOJI[type] || '🍴', 40));
+
+    const aw = area.clientWidth;
+    // Spawn cerca de Jose (lado derecho, parte superior)
+    const joseRect = jose.getBoundingClientRect();
+    const areaRect = area.getBoundingClientRect();
+    const startX = joseRect.left - areaRect.left + 10;
+    const startY = joseRect.top - areaRect.top + 30;
+
+    // Trayectoria: hacia la izquierda + abajo (con leve aleatoriedad)
+    const vx = -180 - Math.random() * 120;
+    const vy = state4.speed + 60 + Math.random() * 100;
+
+    el.style.transform = `translate(${startX}px, ${startY}px)`;
+    layer.appendChild(el);
+    state4.obstacles.push({
+      el, x: startX, y: startY, w, h, type: 'jose-food',
+      vx, vy, dead: false,
+    });
+  }
 
   function getGame4Area() { return document.getElementById('game4-area'); }
   function getObstaclesLayer() { return document.getElementById('obstacles'); }
@@ -1746,6 +1793,33 @@
     if (!layer || !area) return;
 
     const w = 56, h = 56;
+
+    // El gato cruza la calle de un lado a otro mirando hacia donde corre.
+    if (type === 'gato') {
+      const aw = area.clientWidth;
+      const goingRight = Math.random() < 0.5;
+      const el = document.createElement('div');
+      el.className = 'obstacle obstacle-cat';
+      el.style.width = w + 'px';
+      el.style.height = h + 'px';
+      const emoji = makeEmojiEl(OBSTACLE_EMOJI[type], 44);
+      // 🐈 mira a la izquierda por defecto. Si va hacia la derecha, lo espejamos.
+      if (goingRight) emoji.style.transform = 'scaleX(-1)';
+      el.appendChild(emoji);
+
+      const startX = goingRight ? -w - 8 : aw + 8;
+      const startY = 80 + Math.random() * 120;
+      const vx = goingRight ? 220 : -220;
+      const vy = state4.speed;  // baja con el scroll como el resto del mundo
+
+      el.style.transform = `translate(${startX}px, ${startY}px)`;
+      layer.appendChild(el);
+      state4.obstacles.push({
+        el, x: startX, y: startY, w, h, type,
+        vx, vy, dead: false,
+      });
+      return;
+    }
 
     const el = document.createElement('div');
     el.className = 'obstacle';
@@ -1770,6 +1844,7 @@
     const area = getGame4Area();
     if (!area) return;
     const ah = area.clientHeight;
+    const aw = area.clientWidth;
 
     const player = getPlayer4();
     const playerRect = player ? player.getBoundingClientRect() : null;
@@ -1778,7 +1853,9 @@
     for (let i = state4.obstacles.length - 1; i >= 0; i--) {
       const o = state4.obstacles[i];
       if (o.dead) continue;
-      o.y += state4.speed * dt;
+      // Velocidad por defecto = velocidad de scroll del mundo
+      o.y += (o.vy != null ? o.vy : state4.speed) * dt;
+      if (o.vx) o.x += o.vx * dt;
       o.el.style.transform = `translate(${o.x}px, ${o.y}px)`;
 
       // colisión (con margen interno para que no sea injusto)
@@ -1810,7 +1887,7 @@
         }
       }
 
-      if (o.y > ah + 20) {
+      if (o.y > ah + 20 || o.x < -o.w - 50 || o.x > aw + 50) {
         o.dead = true;
         o.el.remove();
         state4.obstacles.splice(i, 1);
@@ -1852,24 +1929,57 @@
     const ah = area.clientHeight;
     const progress = Math.min(100, state4.elapsed / ROUTE_DURATION * 100);
 
-    // Codere baja desde el top con el scroll inicial (visible 1.5s y se va)
+    // CODERE está anclado abajo y se va deslizando hacia abajo al avanzar
     if (start) {
       const t = Math.min(1, state4.elapsed / 2);
-      start.style.transform = `translateY(${t * (ah * 0.7)}px)`;
+      start.style.transform = `translateY(${t * 140}px)`;
       start.style.opacity = state4.elapsed > 2.5 ? '0' : '1';
     }
-    // Garito aparece desde arriba cuando queda menos del 20%
+    // Fachada del GARITO: aparece desde el top cuando queda <25%
     if (end) {
       const remaining = 100 - progress;
       if (remaining < 25) {
         const t = (25 - remaining) / 25;          // 0 → 1
-        end.style.transform = `translateY(${t * (ah * 0.55)}px)`;
+        end.style.transform = `translateY(${-260 + t * 260}px)`;
         end.style.opacity = '1';
       } else {
-        end.style.transform = 'translateY(-200px)';
+        end.style.transform = 'translateY(-260px)';
         end.style.opacity = '0';
       }
     }
+  }
+
+  /** Animación final: la puerta se abre y el jugador entra por ella */
+  function playEnterDoorAnim() {
+    const player = getPlayer4();
+    const door = document.getElementById('bar-door');
+    const area = getGame4Area();
+    if (!player || !door || !area) return Promise.resolve();
+
+    // 1) limpiar obstáculos en pantalla (fade)
+    state4.obstacles.forEach(o => {
+      o.dead = true;
+      o.el.classList.add('fade-out');
+      setTimeout(() => o.el.remove(), 450);
+    });
+    state4.obstacles = [];
+
+    // 2) abrir la puerta
+    door.classList.add('opening');
+
+    // 3) tras la apertura, el jugador entra
+    return new Promise(res => {
+      setTimeout(() => {
+        const playerRect = player.getBoundingClientRect();
+        const doorRect = door.getBoundingClientRect();
+        const dx = (doorRect.left + doorRect.width / 2) - (playerRect.left + playerRect.width / 2);
+        const dy = (doorRect.top + doorRect.height * 0.4) - (playerRect.top + playerRect.height * 0.3);
+        player.style.transition = 'transform 0.9s ease-in, opacity 0.5s ease-in 0.5s';
+        player.style.transform = `translateX(calc(-50% + ${dx}px)) translateY(${dy}px) scale(0.16)`;
+        player.style.opacity = '0';
+        setTimeout(res, 1000);
+      }, 450);
+    });
   }
 
   function updateHUD4() {
@@ -1900,20 +2010,42 @@
 
     scrollRoad(dt);
 
+    // A 3/4 del trayecto: dejar de spawnear obstáculos normales y aparece Jose lanzando comida
+    const progressPct = Math.min(100, state4.elapsed / ROUTE_DURATION * 100);
+    const joseActive = progressPct >= 75 && !state4.entering;
+
     state4.spawnTimer += dt * 1000;
-    if (state4.spawnTimer >= state4.spawnInterval) {
+    if (!joseActive && !state4.entering && state4.spawnTimer >= state4.spawnInterval) {
       state4.spawnTimer = 0;
       spawnObstacle();
     }
 
+    // Aparición de Jose y lanzamiento de comida
+    const jose = document.getElementById('jose-runner');
+    if (joseActive) {
+      if (!state4.joseVisible) {
+        state4.joseVisible = true;
+        if (jose) jose.classList.add('visible');
+      }
+      state4.joseFoodTimer += dt * 1000;
+      if (state4.joseFoodTimer >= state4.joseFoodInterval) {
+        state4.joseFoodTimer = 0;
+        spawnJoseFood();
+        // ligero aleatorio en el intervalo
+        state4.joseFoodInterval = 550 + Math.random() * 350;
+      }
+    }
+
     updateObstacles4(dt);
-    updatePlayer4(dt);
+    if (!state4.entering) updatePlayer4(dt);
     updateLandmarks4();
     updateHUD4();
 
-    if (state4.elapsed >= ROUTE_DURATION) {
-      endGame4(true);
-      return;
+    if (state4.elapsed >= ROUTE_DURATION && !state4.entering) {
+      state4.entering = true;
+      // Detener spawn de obstáculos a partir de ahora
+      state4.spawnInterval = 1e9;
+      playEnterDoorAnim().then(() => endGame4(true));
     }
 
     state4.rafId = requestAnimationFrame(game4Loop);
@@ -1929,8 +2061,25 @@
     state4.invuln = 0;
     state4.lastTime = 0;
     state4.bgY = 0;
+    state4.entering = false;
     state4.obstacles.forEach(o => o.el.remove());
     state4.obstacles = [];
+
+    // restablecer transform/opacity del jugador (por si quedó animado de la run anterior)
+    const player = getPlayer4();
+    if (player) {
+      player.style.transition = '';
+      player.style.transform = 'translateX(-50%)';
+      player.style.opacity = '1';
+    }
+    // restablecer la puerta del bar
+    const door = document.getElementById('bar-door');
+    if (door) door.classList.remove('opening');
+    // restablecer Jose (oculto fuera de pantalla)
+    state4.joseVisible = false;
+    state4.joseFoodTimer = 0;
+    const jose = document.getElementById('jose-runner');
+    if (jose) jose.classList.remove('visible');
 
     requestAnimationFrame(() => {
       const area = getGame4Area();

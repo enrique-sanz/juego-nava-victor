@@ -987,19 +987,37 @@ canvas {
 
 /* ===== Pantalla 3: Ruleta ===== */
 .roulette-area {
-  background:
-    radial-gradient(ellipse at top, #0a3a1a 0%, #062c14 60%, #03190a 100%);
+  background: #03190a;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 56px 12px 12px;
 }
 
+.roulette-stage {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background-image: url('assets/ruleta-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-color: #0a1426;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px 4% 10px 8px;
+  box-sizing: border-box;
+  border: 3px solid #d4af37;
+  box-shadow: 0 0 0 2px #000, inset 0 0 14px rgba(0, 0, 0, 0.55);
+  margin: 4px 0 4px;
+  flex-shrink: 0;
+}
+
 .roulette-wrap {
   position: relative;
   width: 220px;
   height: 220px;
-  margin: 12px 0 8px;
+  margin: 0;
   flex-shrink: 0;
 }
 
@@ -1007,18 +1025,12 @@ canvas {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background:
-    radial-gradient(circle,
-      #2a1810 0%,
-      #2a1810 30%,
-      #5a2818 31%,
-      #5a2818 65%,
-      #d4af37 67%,
-      #aa7700 100%);
+  background: #2a1810; /* fallback; el conic-gradient se aplica vía JS */
   box-shadow:
-    0 0 0 5px #5a2818,
-    0 0 0 10px #2a1810,
-    inset 0 0 22px rgba(0, 0, 0, 0.8),
+    0 0 0 3px #d4af37,
+    0 0 0 6px #5a2818,
+    0 0 0 11px #2a1810,
+    inset 0 0 22px rgba(0, 0, 0, 0.75),
     0 6px 14px rgba(0, 0, 0, 0.6);
 }
 
@@ -1026,26 +1038,19 @@ canvas {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 22px;
-  height: 22px;
-  margin: -11px 0 0 -11px;
+  width: 18px;
+  height: 14px;
+  margin: -7px 0 0 -9px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Press Start 2P', monospace;
-  font-size: 0.42rem;
+  font-size: 0.4rem;
   color: #fff;
-  text-shadow: 1px 1px 0 #000;
-  border-radius: 50%;
-  border: 1px solid rgba(0,0,0,0.5);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 2px rgba(0,0,0,0.6);
+  text-shadow: 1px 1px 0 #000, 0 0 2px rgba(0, 0, 0, 0.9);
   pointer-events: none;
   z-index: 2;
 }
-
-.wheel-num.red   { background: #c41e3a; }
-.wheel-num.black { background: #1a1a1a; }
-.wheel-num.green { background: #128c3a; }
 
 .wheel-orbit {
   position: absolute;
@@ -1216,8 +1221,159 @@ canvas {
   transition: transform 0.05s linear;
 }
 
-.landmark-start { top: 0; }
-.landmark-end   { top: 0; transform: translateY(-200px); }
+/* CODERE va DEBAJO del jugador, anclado al pie de la pantalla */
+.landmark-start {
+  bottom: 0;
+  top: auto;
+  height: auto;
+  padding: 12px 8px 20px;
+}
+
+.landmark-end {
+  top: 0;
+  bottom: auto;
+  height: auto;
+  transform: translateY(-260px);
+  display: block;
+  z-index: 5;        /* por encima de obstáculos (z=3) y jugador (z=4) */
+}
+
+/* Fachada del Garito Bar */
+.bar-facade {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bar-front {
+  width: 100%;
+  height: 160px;
+  position: relative;
+  background:
+    /* listones de madera/pared */
+    repeating-linear-gradient(to bottom,
+      #6b4a2a 0 8px,
+      #5a3a1c 8px 10px),
+    #6b4a2a;
+  border-top: 4px solid #2a1810;
+  border-bottom: 4px solid #2a1810;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Rótulo pequeño a la izquierda de la puerta */
+.bar-sign {
+  position: absolute;
+  bottom: 22px;
+  right: 50%;
+  margin-right: 36px;   /* door_half (28) + gap (8) */
+  width: 50px;
+  height: 50px;
+  border: 3px solid #0a3a4a;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000,
+              3px 3px 0 rgba(0, 0, 0, 0.5);
+  z-index: 3;
+}
+
+.bar-front-detail {
+  flex: 1;
+  height: 100%;
+  position: relative;
+}
+
+/* Sólo ventana a la derecha (a la izquierda va el rótulo) */
+.bar-front-detail.bar-front-right::before {
+  content: '';
+  position: absolute;
+  bottom: 30px;
+  left: 8px;
+  width: 28px;
+  height: 22px;
+  background:
+    repeating-linear-gradient(45deg, #4a8ec8 0 4px, #6aaaee 4px 8px),
+    #4a8ec8;
+  border: 3px solid #2a1810;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.bar-door-wrap {
+  position: relative;
+  width: 56px;
+  height: 84px;
+  perspective: 600px;
+}
+
+.bar-interior {
+  position: absolute;
+  inset: 0;
+  border-radius: 28px 28px 0 0;
+  background:
+    radial-gradient(ellipse at 50% 60%, #3a2a1a 0%, #1a0a04 60%, #000 100%);
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.9);
+  z-index: 1;
+}
+
+.bar-door {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right, #4a2810 0%, #6b3a1c 30%, #6b3a1c 70%, #4a2810 100%);
+  border: 4px solid #1a0a04;
+  border-radius: 28px 28px 0 0;
+  box-shadow:
+    inset 0 8px 0 rgba(0, 0, 0, 0.25),
+    inset 8px 0 0 rgba(0, 0, 0, 0.15),
+    inset -8px 0 0 rgba(0, 0, 0, 0.15);
+  transform-origin: left center;
+  transition: transform 0.55s ease-in;
+  z-index: 2;
+}
+
+.bar-door.opening {
+  transform: rotateY(-85deg);
+  box-shadow:
+    inset 0 8px 0 rgba(0, 0, 0, 0.25),
+    inset 8px 0 0 rgba(0, 0, 0, 0.15),
+    inset -8px 0 0 rgba(0, 0, 0, 0.15),
+    4px 0 12px rgba(0, 0, 0, 0.6);
+}
+
+.bar-door-handle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fce200, #aa7700);
+  box-shadow: 0 0 0 1px #000, 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* Obstáculos desvaneciendose en la transición final */
+.obstacle.fade-out {
+  animation: obstacle-fade 0.4s ease-out forwards;
+}
+@keyframes obstacle-fade {
+  to { opacity: 0; transform: translate(var(--ox, 0), var(--oy, 0)) scale(0.7); }
+}
+
+.landmark-image {
+  max-width: 50%;
+  max-height: 36px;
+  width: auto;
+  height: auto;
+  background: #fff;
+  padding: 4px 10px;
+  border: 3px solid #000;
+  box-shadow:
+    0 0 0 3px #fff,
+    0 0 0 6px #000,
+    4px 4px 0 rgba(0, 0, 0, 0.6);
+}
 
 .landmark-sign {
   font-family: 'Press Start 2P', monospace;
@@ -1253,6 +1409,39 @@ canvas {
   inset: 0;
   z-index: 3;
   pointer-events: none;
+}
+
+/* Jose en el runner: aparece a 3/4 de trayecto a la derecha lanzando comida */
+.jose-runner {
+  position: absolute;
+  right: -130px;          /* fuera de pantalla por defecto */
+  top: 26%;
+  width: 110px;
+  z-index: 4;
+  pointer-events: none;
+  transition: right 0.7s ease-out;
+  transform-origin: center;
+}
+
+.jose-runner img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(3px 3px 0 rgba(0, 0, 0, 0.6));
+  animation: jose-throw 0.8s ease-in-out infinite;
+}
+
+.jose-runner.visible {
+  right: -10px;
+}
+
+@keyframes jose-throw {
+  0%, 100% { transform: rotate(-2deg) translateY(0); }
+  50%      { transform: rotate(2deg) translateY(-3px); }
+}
+
+.obstacle.jose-food {
+  z-index: 3;
 }
 
 .obstacle {
