@@ -2180,7 +2180,6 @@
         state5.drops.splice(i, 1);
         // cada acierto vacía la vejiga
         state5.bladder = Math.max(0, state5.bladder - HIT_PER_DROP);
-        console.log('[HIT] bladder=', state5.bladder, 'drop@', dropCx.toFixed(0), dropCy.toFixed(0), 'toilet@', toiletCx.toFixed(0), toiletCy.toFixed(0));
         updateHUD5();
         beep(880 + Math.random() * 80, 0.04, 'square', 0.06);
         if (state5.bladder <= 0) {
@@ -2229,10 +2228,8 @@
     const fill = document.getElementById('bladder-fill');
     const pct  = document.getElementById('bladder-pct');
     const time = document.getElementById('time5');
-    const label = document.querySelector('#game5-screen .hud-label');
-    // DEBUG: muestra valor real de bladder en el label
-    if (label) label.textContent = 'VEJIGA ' + Math.ceil(state5.bladder);
     if (fill) {
+      // El bar siempre ocupa el 100% del track; se "vacía" con scaleX.
       fill.style.transform = 'scaleX(' + (state5.bladder / 100) + ')';
     }
     if (pct)  pct.textContent  = String(Math.ceil(state5.bladder));
@@ -2263,13 +2260,6 @@
 
     state5.rafId = requestAnimationFrame(game5Loop);
   }
-
-  // DEBUG: muestra el valor de bladder en el título de la pestaña
-  setInterval(() => {
-    if (state5.running) {
-      document.title = `Bladder: ${Math.ceil(state5.bladder)}% — Drops: ${state5.drops.length}`;
-    }
-  }, 200);
 
   function startGame5() {
     setPlayer5Face(state.selectedCharacter || 'victor');
