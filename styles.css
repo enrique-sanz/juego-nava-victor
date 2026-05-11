@@ -806,6 +806,18 @@ canvas {
   letter-spacing: 1px;
 }
 
+.overlay-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 8px;
+}
+
+.overlay-buttons .pixel-btn {
+  margin-bottom: 0;
+  min-width: 80px;
+}
+
 /* ===== Pantalla 2: Chupitos ===== */
 .shots-cluster {
   position: absolute;

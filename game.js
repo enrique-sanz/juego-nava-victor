@@ -928,6 +928,8 @@
     forceDir: 1,
     rafId: null,
     lastTime: 0,
+    questionTimerId: null,
+    questionActive: false,
   };
 
   function getGame2Area() { return document.getElementById('game2-area'); }
@@ -1253,6 +1255,7 @@
 
   function handleTap() {
     if (!state2.running) return;
+    if (state2.questionActive) return;
     if (state2.phase === 'aiming') {
       state2.phase = 'force';
       const meter = getForceMeter();
@@ -1286,11 +1289,51 @@
     const dt = Math.min(0.05, (now - state2.lastTime) / 1000);
     state2.lastTime = now;
 
-    updatePlayer2(dt);
-    updateForce(dt);
-    updateCoins(dt);
+    if (!state2.questionActive) {
+      updatePlayer2(dt);
+      updateForce(dt);
+      updateCoins(dt);
+    }
 
     state2.rafId = requestAnimationFrame(game2Loop);
+  }
+
+  function clearQuestionTimer() {
+    if (state2.questionTimerId) {
+      clearTimeout(state2.questionTimerId);
+      state2.questionTimerId = null;
+    }
+  }
+
+  function showQuestion2() {
+    if (!state2.running || state2.questionActive) return;
+    state2.questionActive = true;
+    const q = document.getElementById('game2-question');
+    if (q) q.classList.remove('hidden');
+    beep(220, 0.2, 'square', 0.15);
+  }
+
+  function answerQuestion2(saidYes) {
+    if (!state2.questionActive) return;
+    const q = document.getElementById('game2-question');
+    if (q) q.classList.add('hidden');
+    state2.questionActive = false;
+
+    const msg = saidYes
+      ? '¡PUES BEBES!'
+      : '¡PUES LO HAS\nDICHO AHORA!\n¡BEBES!';
+    showToast(msg, true);
+    playMissSound();
+    state2.lives -= 1;
+    updateHUD2();
+    if (state2.lives <= 0) {
+      setTimeout(() => endGame2(false), 1900);
+      return;
+    }
+    // si justo estaba en medio de algo raro, volvemos a apuntar
+    if (state2.phase !== 'flying') {
+      resetToAiming();
+    }
   }
 
   function startGame2() {
@@ -1308,6 +1351,12 @@
     const overlay = getOverlay2();
     if (overlay) overlay.classList.add('hidden');
 
+    const q = document.getElementById('game2-question');
+    if (q) q.classList.add('hidden');
+    state2.questionActive = false;
+    clearQuestionTimer();
+    state2.questionTimerId = setTimeout(showQuestion2, 30000);
+
     state2.running = true;
     state2.rafId = requestAnimationFrame(game2Loop);
   }
@@ -1315,6 +1364,10 @@
   function endGame2(win) {
     state2.running = false;
     if (state2.rafId) cancelAnimationFrame(state2.rafId);
+    clearQuestionTimer();
+    state2.questionActive = false;
+    const q = document.getElementById('game2-question');
+    if (q) q.classList.add('hidden');
     const overlay = getOverlay2();
     const title = document.getElementById('overlay2-title');
     const text = document.getElementById('overlay2-text');
@@ -1342,6 +1395,15 @@
       return;
     }
     startGame2();
+  });
+
+  bindButton('q2-yes-btn', () => {
+    playClickSound();
+    answerQuestion2(true);
+  });
+  bindButton('q2-no-btn', () => {
+    playClickSound();
+    answerQuestion2(false);
   });
 
   // ========================================================================
