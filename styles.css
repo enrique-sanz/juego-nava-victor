@@ -552,14 +552,20 @@ canvas {
   animation: bar-glow 0.4s ease-in-out infinite alternate;
 }
 
-/* Barra de vejiga: amarillo (orina). Sobrescribe el gradiente global. */
-#bladder-fill,
-#bladder-fill.full {
+/* Barra de vejiga: amarilla, escalada con transform:scaleX para evitar
+   cualquier conflicto con .bar-fill { width: 0% }. */
+#bladder-fill {
+  width: 100% !important;
   background: linear-gradient(to bottom,
     #fff8a0 0%,
     #fce200 35%,
-    #d49a00 100%);
-  animation: none;
+    #d49a00 100%) !important;
+  background-size: 100% 100% !important;
+  background-position: 0 0 !important;
+  animation: none !important;
+  transform-origin: left center;
+  transform: scaleX(1);
+  transition: transform 0.15s ease-out;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45),
               inset 0 -1px 0 rgba(120, 70, 0, 0.4);
 }
