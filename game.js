@@ -952,11 +952,12 @@
   }
 
   /**
-   * Coloca los 9 chupitos en cuadrícula 3x3:
-   *   A B C
-   *   D E F      ← E es el centro
-   *   G H I      ← H (abajo-centro) = trampa, el más cercano al jugador
-   * Todos los chupitos están pegados (separación = ancho del chupito).
+   * Coloca los 9 chupitos en rombo (1-2-3-2-1):
+   *         A         ← fila 1
+   *       D   B       ← fila 2
+   *     G   E   C     ← fila 3 (E = centro)
+   *       H   F       ← fila 4
+   *         I         ← fila 5: el más cercano al jugador = trampa
    */
   function placeShots() {
     const cluster = getShotsCluster();
@@ -966,26 +967,22 @@
 
     const cw = cluster.clientWidth;
     const ch = cluster.clientHeight;
-    const SHOT_W = 64;            // ancho del chupito = separación entre centros
-    const SHOT_H = 64;
+    const SHOT_W = 64;
     const cx = cw / 2;
-    // centramos verticalmente las 3 filas
-    const totalHeight = 3 * SHOT_H;
-    const startY = (ch - totalHeight) / 2 + SHOT_H / 2;
+    const cy = ch / 2;
+    // separación entre centros: la mayor posible que mantenga el rombo dentro del cluster
+    const s = Math.floor(Math.min((cw - SHOT_W) / 4, (ch - SHOT_W) / 4));
 
     const positions = [
-      // Fila 1 (atrás)
-      { x: cx - SHOT_W, y: startY + 0 * SHOT_H },
-      { x: cx,          y: startY + 0 * SHOT_H },
-      { x: cx + SHOT_W, y: startY + 0 * SHOT_H },
-      // Fila 2 (centro)
-      { x: cx - SHOT_W, y: startY + 1 * SHOT_H },
-      { x: cx,          y: startY + 1 * SHOT_H, isCenter: true },
-      { x: cx + SHOT_W, y: startY + 1 * SHOT_H },
-      // Fila 3 (más cercana al jugador)
-      { x: cx - SHOT_W, y: startY + 2 * SHOT_H },
-      { x: cx,          y: startY + 2 * SHOT_H, isDanger: true },  // trampa
-      { x: cx + SHOT_W, y: startY + 2 * SHOT_H },
+      { x: cx,         y: cy - 2 * s },                       // A — arriba
+      { x: cx - s,     y: cy - s },                           // D — arriba-izda
+      { x: cx + s,     y: cy - s },                           // B — arriba-dcha
+      { x: cx - 2 * s, y: cy },                               // G — izda
+      { x: cx,         y: cy,         isCenter: true },       // E — centro
+      { x: cx + 2 * s, y: cy },                               // C — dcha
+      { x: cx - s,     y: cy + s },                           // H — abajo-izda
+      { x: cx + s,     y: cy + s },                           // F — abajo-dcha
+      { x: cx,         y: cy + 2 * s, isDanger: true },       // I — abajo = trampa
     ];
 
     positions.forEach((pos, idx) => {
@@ -1004,6 +1001,7 @@
         cy: pos.y,
         filled: false,
         danger: !!pos.isDanger,
+        isCenter: !!pos.isCenter,
         index: idx,
       });
     });
@@ -1169,6 +1167,18 @@
       resetToAiming();
       return;
     }
+    if (shot.isCenter) {
+      // chupito central: bebe todo el grupo → se vacían las monedas
+      markShotFilled(shot);
+      showToast('OH NO, ¡AL MEDIO BEBEN TODOS!', true);
+      playMissSound();
+      setTimeout(() => {
+        clearAllShots();
+        updateHUD2();
+        resetToAiming();
+      }, 1500);
+      return;
+    }
     if (shot.danger) {
       // ¡Tu chupito! pierdes vida
       markShotFilled(shot);
@@ -1188,12 +1198,23 @@
     updateHUD2();
     playEatSound();
 
-    const filledNonDanger = state2.shots.filter(s => s.filled && !s.danger).length;
-    if (filledNonDanger >= 8) {
+    const filledNonDanger = state2.shots.filter(s => s.filled && !s.danger && !s.isCenter).length;
+    if (filledNonDanger >= 7) {
       setTimeout(() => endGame2(true), 600);
       return;
     }
     resetToAiming();
+  }
+
+  function clearAllShots() {
+    state2.shots.forEach(shot => {
+      shot.filled = false;
+      shot.el.classList.remove('filled');
+      if (shot.coin) {
+        shot.coin.remove();
+        shot.coin = null;
+      }
+    });
   }
 
   function showToast(msg, danger) {
@@ -1208,12 +1229,12 @@
   }
 
   function updateHUD2() {
-    const filledNonDanger = state2.shots.filter(s => s.filled && !s.danger).length;
-    const done = getShotsDoneEl(); if (done) done.textContent = String(filledNonDanger);
+    const filledGood = state2.shots.filter(s => s.filled && !s.danger && !s.isCenter).length;
+    const done = getShotsDoneEl(); if (done) done.textContent = String(filledGood);
     const fill = getShotsFillEl();
     if (fill) {
-      fill.style.width = ((filledNonDanger / 8) * 100) + '%';
-      fill.classList.toggle('full', filledNonDanger >= 8);
+      fill.style.width = ((filledGood / 7) * 100) + '%';
+      fill.classList.toggle('full', filledGood >= 7);
     }
     const l = getLives2El(); if (l) l.textContent = String(state2.lives);
   }
@@ -1298,7 +1319,7 @@
     const btn = document.getElementById('overlay2-btn');
     if (win) {
       if (title) title.textContent = '¡PRUEBA 2 SUPERADA!';
-      if (text) text.innerHTML = `8 DE 9 CHUPITOS<br>¡SIGUE EN PIE!`;
+      if (text) text.innerHTML = `¡BIEN HECHO!<br>HAS EMBORRACHADO A TODOS.<br><br>AHORA AL CODERE<br>A PERDER DINERO.`;
       if (btn) btn.textContent = 'CONTINUAR';
       playStartSound();
     } else {
@@ -1348,6 +1369,7 @@
     lives: 3,
     selected: null,
     ballAngle: 0,         // ángulo acumulado de la bola (siempre creciente)
+    balance: -5,          // saldo en euros (empieza en -5€, baja 5€ por tirada)
   };
 
   function buildBetLayout() {
@@ -1435,6 +1457,8 @@
 
   function spinRoulette(picked) {
     state3.spinning = true;
+    state3.balance -= 5;
+    updateHUD3();
     const result = pickRouletteResult();
     const idx = WHEEL_ORDER.indexOf(result);
     const targetAngle = idx * SLOT_ANGLE;
@@ -1481,7 +1505,7 @@
       if (num === picked) {
         if (status) {
           if (num === 22) status.textContent = '¡EL 22 DE ISCO!';
-          else if (num === 8) status.textContent = '¡EL 8 DE IBAÑÉS!';
+          else if (num === 8) status.textContent = '¡EL 8 DEL CAPITÁN!';
           else status.textContent = '¡ACERTASTE EL ' + num + '!';
           status.className = 'bet-status win';
         }
@@ -1526,6 +1550,8 @@
   function updateHUD3() {
     const l = document.getElementById('lives3');
     if (l) l.textContent = String(state3.lives);
+    const b = document.getElementById('balance3');
+    if (b) b.textContent = state3.balance + '€';
   }
 
   function startGame3() {
@@ -1536,6 +1562,7 @@
     state3.lives = (typeof state2 !== 'undefined' && state2.lives > 0) ? state2.lives : 3;
     state3.selected = null;
     state3.ballAngle = 0;
+    state3.balance = -5;
     updateHUD3();
     resetForNextSpin();
     const orbit = document.getElementById('wheel-orbit');
@@ -1562,10 +1589,12 @@
       if (state3.selected === 22) {
         html = '¡HAS ACERTADO<br>EL 22 DE ISCO!!';
       } else if (state3.selected === 8) {
-        html = 'SÍ SEÑOR,<br>EL 8 DEL CAPITÁN<br>DE IBAÑÉS!!';
+        html = '¡SÍ SEÑOR!<br>EL 8 DEL CAPITÁN<br>DEL ATLÉTICO IBAÑES!';
       } else {
         html = `EL ${state3.selected} ERA TU NÚMERO.<br>SIGUES VIVO`;
       }
+      html += `<br><br>¡SOLO HAS PERDIDO ${Math.abs(state3.balance)} EUROS!`;
+      html += `<br><br>AHORA AL GARITO<br>A GASTAR LO POCO<br>QUE TE QUEDA`;
       if (text) text.innerHTML = html;
       if (btn) btn.textContent = 'CONTINUAR';
       btn.dataset.next = 'next';
