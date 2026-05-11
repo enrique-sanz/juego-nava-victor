@@ -2075,7 +2075,7 @@
   const state5 = {
     running: false,
     elapsed: 0,
-    fillness: 0,
+    bladder: 100,          // 100 = vejiga llena, 0 = vaciada (objetivo)
     aimAngle: 0,           // -50 a +50
     aimDir: 0,             // -1, 0, 1 según teclas
     drops: [],
@@ -2178,10 +2178,11 @@
         d.el.classList.add('hit');
         setTimeout(() => d.el.remove(), 300);
         state5.drops.splice(i, 1);
-        state5.fillness = Math.min(100, state5.fillness + HIT_PER_DROP);
+        // cada acierto vacía la vejiga
+        state5.bladder = Math.max(0, state5.bladder - HIT_PER_DROP);
         updateHUD5();
         beep(880 + Math.random() * 80, 0.04, 'square', 0.06);
-        if (state5.fillness >= 100) {
+        if (state5.bladder <= 0) {
           endGame5(true);
           return;
         }
@@ -2224,14 +2225,13 @@
   }
 
   function updateHUD5() {
-    const fill = document.getElementById('urine-fill');
-    const pct  = document.getElementById('urine-pct');
+    const fill = document.getElementById('bladder-fill');
+    const pct  = document.getElementById('bladder-pct');
     const time = document.getElementById('time5');
     if (fill) {
-      fill.style.width = state5.fillness + '%';
-      fill.classList.toggle('full', state5.fillness >= 100);
+      fill.style.width = state5.bladder + '%';
     }
-    if (pct)  pct.textContent  = String(Math.floor(state5.fillness));
+    if (pct)  pct.textContent  = String(Math.ceil(state5.bladder));
     if (time) time.textContent = String(Math.max(0, Math.ceil(ROUND5_DURATION - state5.elapsed)));
   }
 
@@ -2276,7 +2276,7 @@
       pivot.appendChild(c);
     }
     state5.elapsed = 0;
-    state5.fillness = 0;
+    state5.bladder = 100;
     state5.aimAngle = 0;
     state5.fireTimer = 0;
     state5.lastTime = 0;

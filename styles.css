@@ -552,6 +552,18 @@ canvas {
   animation: bar-glow 0.4s ease-in-out infinite alternate;
 }
 
+/* Barra de vejiga: amarillo (orina). Sobrescribe el gradiente global. */
+#bladder-fill,
+#bladder-fill.full {
+  background: linear-gradient(to bottom,
+    #fff8a0 0%,
+    #fce200 35%,
+    #d49a00 100%);
+  animation: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45),
+              inset 0 -1px 0 rgba(120, 70, 0, 0.4);
+}
+
 @keyframes bar-glow {
   from { box-shadow: 0 0 4px var(--accent); }
   to { box-shadow: 0 0 12px var(--accent), 0 0 18px var(--accent-2); }
@@ -1374,11 +1386,11 @@ canvas {
 
 .weapon-base {
   position: absolute;
-  bottom: 14vh;
+  bottom: calc(14vh + 10px);
   left: 50%;
   width: 0;
   height: 0;
-  z-index: 5;
+  z-index: 3;     /* por debajo del jugador (.player5 = z-index 4) */
   pointer-events: none;
 }
 
