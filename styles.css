@@ -668,6 +668,11 @@ canvas {
   text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 0 0 8px var(--pink);
 }
 
+.floating-points.negative {
+  color: #ff5555;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 2px 2px 0 #550000;
+}
+
 @keyframes float-up {
   0% { transform: translate(-50%, 0) scale(1); opacity: 1; }
   100% { transform: translate(-50%, -40px) scale(1.3); opacity: 0; }

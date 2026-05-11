@@ -105,6 +105,9 @@
     cerveza: '🍺',
     pollo: '🍗',
     tarta: '🎂',
+    berenjena: '🍆',
+    chile: '🌶️',
+    brocoli: '🥦',
   };
 
   const OBSTACLE_EMOJI = {
@@ -127,236 +130,10 @@
   }
 
   // ========================================================================
-  // (Sprites pixel-art antiguos — preservados por compatibilidad)
-  // ========================================================================
-  const FOOD_PALETTE = {
-    '.': null,
-    '0': '#000000',
-    '1': '#ffffff',
-    '2': '#fce200', '3': '#ff8800', '4': '#ff3333', '5': '#aa1111',
-    '6': '#7a4a2a', '7': '#5a2818', '8': '#3a1e10',
-    '9': '#f4a880', 'a': '#d68855', 'b': '#b06030',
-    'c': '#ffcc66', 'd': '#cc8833',
-    'e': '#88dd55', 'f': '#226622',
-    'g': '#ffeebb', 'h': '#cc9966',
-    'i': '#ff77aa', 'j': '#cc4477',
-    'k': '#aaaaaa', 'l': '#666666',
-    'm': '#ffd700', 'n': '#dd2244',
-    'o': '#993322', 'p': '#660011',
-  };
-
-  // 16x16 sprites — cada char es un índice de color
-  const FOOD_SPRITES = {
-    chuleton: [
-      '................',
-      '......111.......',
-      '.....11k11......',
-      '....1kkkk1......',
-      '....1kkkk1......',
-      '...77777777.....',
-      '..7777777777....',
-      '.7665566666677..',
-      '.766665566677...',
-      '.776655666677...',
-      '.7766665666677..',
-      '.7777666666677..',
-      '..77666677777...',
-      '...777777777....',
-      '....77777.......',
-      '................',
-    ],
-    patatas: [
-      '................',
-      '......22........',
-      '....2.22.2......',
-      '...22d2222.2....',
-      '..2.222d22.2....',
-      '..22dd2d22d2....',
-      '...222222d22....',
-      '....2dd22d22....',
-      '....3333333.....',
-      '...33333333.....',
-      '...3lll3lll3....',
-      '...3lll3lll3....',
-      '...3lll3lll3....',
-      '....333333......',
-      '................',
-      '................',
-    ],
-    calamar: [
-      '................',
-      '......eeee......',
-      '.....eeeeee.....',
-      '....ee0ee0ee....',
-      '....eeeeeeee....',
-      '.....eeeeee.....',
-      '......eeee......',
-      '.....e.ee.e.....',
-      '....e..ee..e....',
-      '...e..e.e..e....',
-      '..e..e...e..e...',
-      '.e..e.....e..e..',
-      '....e.....e.....',
-      '....e.....e.....',
-      '.....e...e......',
-      '................',
-    ],
-    gamba: [
-      '................',
-      '......i.........',
-      '.....iii........',
-      '....iiiii.......',
-      '...iijjii.......',
-      '...iijjjii......',
-      '..iiijjiii......',
-      '.iiiijjijii.....',
-      '..iiiijjijii....',
-      '...iiiijjijii...',
-      '....iiiijjjii...',
-      '.....iiiijjj....',
-      '......iiiii.....',
-      '.......iii......',
-      '........i.......',
-      '................',
-    ],
-    hamburguesa: [
-      '................',
-      '....ggggggg.....',
-      '...gggcgcggg....',
-      '..gggggcgcggg...',
-      '..gggggggggg....',
-      '..eeeeeeeeee....',
-      '..oo7oo7oo7o....',
-      '..oo777oo7oo....',
-      '..ggggggggg.....',
-      '..oo7777oo7.....',
-      '..oo77oo7oo.....',
-      '..hhhhhhhhh.....',
-      '..hhhhhhhhh.....',
-      '...hhhhhhh......',
-      '................',
-      '................',
-    ],
-    pizza: [
-      '................',
-      '......d.........',
-      '.....ddd........',
-      '....ddmd........',
-      '...dd2mmd.......',
-      '..ddmmnnmd......',
-      '..d2mn2mmd......',
-      '.dd2mmmmn2dd....',
-      '.dddmnmmmm2d....',
-      'ddc2mmm2nnmd....',
-      'dddddddddddd....',
-      '6666666666666...',
-      '8888888888888...',
-      '................',
-      '................',
-      '................',
-    ],
-    sangria: [
-      '................',
-      '..kkkkkkkkkk....',
-      '..k.....k...k...',
-      '..k.nnn.k...k...',
-      '..k.nnn.k...k...',
-      '..k.nnn.k...k...',
-      '..kpnnnnk...k...',
-      '..kpnnnnpk..k...',
-      '..kpnnnnpk..k...',
-      '..kppppppk..k...',
-      '..kpppppppk.k...',
-      '..kpppppppkk....',
-      '..kkkkkkkkk.....',
-      '...kkkkkkk......',
-      '................',
-      '................',
-    ],
-    cerveza: [
-      '................',
-      '..1111111111....',
-      '..1111111111....',
-      '..11111111111...',
-      '..2222222222.k..',
-      '..2c2c2c2c22.k..',
-      '..2222222c2..k..',
-      '..2c2222c222.k..',
-      '..2222c22222.k..',
-      '..2c2c22cc22.k..',
-      '..2222222222.k..',
-      '..d2d2d2d2dd....',
-      '..ddddddddd.....',
-      '...ddddddd......',
-      '................',
-      '................',
-    ],
-    pollo: [
-      '................',
-      '......dd........',
-      '.....dccd.......',
-      '....dccccd......',
-      '...ddcccdd......',
-      '...ddccdcd......',
-      '...ddddddd......',
-      '..ddddccdddd....',
-      '.ddccccccddd....',
-      '.dccccccccdd....',
-      'ddccccccccccd...',
-      'dcccdccdcccdd...',
-      '.ddddddddddd....',
-      '..ddddddddd.....',
-      '...dddddd.......',
-      '................',
-    ],
-    tarta: [
-      '................',
-      '.......2........',
-      '......232.......',
-      '......222.......',
-      '.......1........',
-      '.......1........',
-      '..iiiiiiiiii....',
-      '..i111iii11i....',
-      '..iiiiiiiiii....',
-      '..6c6c6c6c66....',
-      '..66c66c66c6....',
-      '..hh6h66h6h6....',
-      '..hhhhhhhhhh....',
-      '..kkkkkkkkkk....',
-      '...kkkkkkkk.....',
-      '................',
-    ],
-  };
-
-  const FOOD_TYPES = Object.keys(FOOD_SPRITES);
-
-  /** Renderiza un sprite a un canvas escalado */
-  function renderFoodCanvas(spriteKey, scale = 4) {
-    const sprite = FOOD_SPRITES[spriteKey];
-    const w = sprite[0].length * scale;
-    const h = sprite.length * scale;
-    const canvas = document.createElement('canvas');
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
-    for (let y = 0; y < sprite.length; y++) {
-      for (let x = 0; x < sprite[y].length; x++) {
-        const ch = sprite[y][x];
-        const color = FOOD_PALETTE[ch];
-        if (!color) continue;
-        ctx.fillStyle = color;
-        ctx.fillRect(x * scale, y * scale, scale, scale);
-      }
-    }
-    return canvas;
-  }
-
-  // ========================================================================
   // JUEGO: SPAWN, FÍSICA, COLISIÓN
   // ========================================================================
   // Valor según calorías: 1 (poco) a 5 (mucho). Tarta es especial: 10.
+  // Verduras (berenjena, chile, brocoli) restan 5: ¡no las cojas!
   const FOOD_VALUES = {
     gamba: 1,
     patatas: 2,
@@ -368,15 +145,19 @@
     pollo: 4,
     chuleton: 5,
     tarta: 10,           // bonus
+    berenjena: -5,
+    chile: -5,
+    brocoli: -5,
   };
 
-  // Pesos de aparición (la tarta es rara)
+  // Pesos de aparición (la tarta es rara, las verduras también pero algo más)
   const FOOD_WEIGHTS = {
     gamba: 12, patatas: 12, calamar: 10,
     sangria: 10, cerveza: 10,
     hamburguesa: 10, pizza: 10, pollo: 10,
     chuleton: 8,
     tarta: 3,            // poco frecuente
+    berenjena: 5, chile: 5, brocoli: 5,
   };
 
   const WEIGHTED_TYPES = (() => {
@@ -400,8 +181,19 @@
   function getLivesEl() { return document.getElementById('lives'); }
   function getOverlay() { return document.getElementById('game-overlay'); }
 
-  function spawnFood() {
-    const type = pickFoodType();
+  function isBadFood(type) {
+    return (FOOD_VALUES[type] || 0) < 0;
+  }
+
+  function pickGoodFoodType() {
+    for (let i = 0; i < 20; i++) {
+      const t = pickFoodType();
+      if (!isBadFood(t)) return t;
+    }
+    return 'gamba';
+  }
+
+  function spawnFoodInstance(type, x, vx) {
     const layer = getFoodLayer();
     const area = getGameArea();
     if (!layer || !area) return;
@@ -412,23 +204,39 @@
 
     const w = 64, h = 64;
     const areaRect = area.getBoundingClientRect();
-    // Spawn cerca del centro-arriba (donde está Jose) con dispersión horizontal
-    const minX = 16;
-    const maxX = areaRect.width - w - 16;
-    const x = minX + Math.random() * (maxX - minX);
     const y = Math.max(140, areaRect.height * 0.18); // bajo Jose
 
     el.style.left = '0px';
     el.style.top = '0px';
     el.style.transform = `translate(${x}px, ${y}px)`;
 
-    // velocidad inicial: dispersión horizontal aleatoria (rebotará en paredes)
     const baseSpeed = 140 + Math.min(180, state.elapsedMs / 1000 * 6);
-    const vx = (Math.random() - 0.5) * 220;       // -110 a +110 px/s
     const vy = baseSpeed + Math.random() * 60;
 
     layer.appendChild(el);
     state.foods.push({ el, x, y, vx, vy, type, w, h, dead: false });
+  }
+
+  function spawnFood() {
+    const type = pickFoodType();
+    const area = getGameArea();
+    if (!area) return;
+    const areaRect = area.getBoundingClientRect();
+    const w = 64;
+    const minX = 16;
+    const maxX = areaRect.width - w - 16;
+    const x = minX + Math.random() * (maxX - minX);
+    const vx = (Math.random() - 0.5) * 220;       // -110 a +110 px/s
+    spawnFoodInstance(type, x, vx);
+
+    // Si es verdura, viene de cebo una comida buena muy cerca (misma trayectoria)
+    if (isBadFood(type)) {
+      const goodType = pickGoodFoodType();
+      const offset = (Math.random() < 0.5 ? -1 : 1) * (30 + Math.random() * 25);
+      const baitX = Math.min(maxX, Math.max(minX, x + offset));
+      const baitVx = vx + (Math.random() - 0.5) * 30;
+      spawnFoodInstance(goodType, baitX, baitVx);
+    }
   }
 
   function updateFoods(dt) {
@@ -496,14 +304,18 @@
     f.el.classList.add('caught');
     setTimeout(() => f.el.remove(), 250);
     const points = FOOD_VALUES[f.type] || 1;
-    state.fullness = Math.min(100, state.fullness + points);
+    state.fullness = Math.max(0, Math.min(100, state.fullness + points));
     showFloatingPoints(f.x + f.w / 2, f.y, points, f.type === 'tarta');
     updateHUD();
     triggerEatAnim();
-    playEatSound();
-    if (f.type === 'tarta') {
-      // sonido especial para tarta
-      setTimeout(() => beep(1568, 0.1, 'square', 0.12), 80);
+    if (points < 0) {
+      playMissSound();
+    } else {
+      playEatSound();
+      if (f.type === 'tarta') {
+        // sonido especial para tarta
+        setTimeout(() => beep(1568, 0.1, 'square', 0.12), 80);
+      }
     }
     if (state.fullness >= 100) endGame(true);
   }
@@ -512,8 +324,11 @@
     const layer = getFoodLayer();
     if (!layer) return;
     const el = document.createElement('div');
-    el.className = 'floating-points' + (special ? ' special' : '');
-    el.textContent = '+' + points;
+    const classes = ['floating-points'];
+    if (special) classes.push('special');
+    if (points < 0) classes.push('negative');
+    el.className = classes.join(' ');
+    el.textContent = (points >= 0 ? '+' : '') + points;
     el.style.left = x + 'px';
     el.style.top = y + 'px';
     layer.appendChild(el);
@@ -524,6 +339,8 @@
     f.dead = true;
     f.el.classList.add('missed');
     setTimeout(() => f.el.remove(), 300);
+    // verdura esquivada: no penaliza
+    if ((FOOD_VALUES[f.type] || 0) < 0) return;
     state.lives -= 1;
     updateHUD();
     playMissSound();
@@ -792,107 +609,6 @@
   // ========================================================================
   // PANTALLA 2 — CHUPITOS Y MONEDAS
   // ========================================================================
-  // 10 chupitos: 1 en el centro y 9 alrededor en un anillo.
-  // El más cercano al jugador (abajo del anillo, ángulo 90°) es la TRAMPA.
-  const SHOTS_COUNT = 10;
-  const SHOTS_DANGER_INDEX = 9;   // último = el más cercano (lo colocamos abajo)
-
-  // Chupito 16x16 con sombreado 16-bit (3 niveles cristal + 4 niveles licor)
-  const SHOT_PALETTE = {
-    '.': null,
-    // Outline
-    'r': '#1a1622',
-    'R': '#0d0a14',          // outline más oscuro
-    // Cristal
-    'c': '#ffffff',          // highlight
-    'g': '#d8d8ec',          // glass base
-    'h': '#7a7898',          // glass shadow
-    'b': '#3a3a52',          // glass deep shadow
-    // Licor amarillo (4 niveles)
-    'L': '#fff7c2',          // brillo superficie
-    'l': '#fce853',          // licor claro
-    'y': '#f0c020',          // licor base
-    'Y': '#c08a10',          // licor sombra
-    'd': '#7a5008',          // licor profundo
-    // Base / pie
-    'k': '#7a7090',
-    'K': '#3a3852',
-    // Moneda dorada dentro (filled)
-    'm': '#fce200',
-    'M': '#aa7700',
-    'D': '#604000',
-    's': '#ffffd0',          // brillo moneda
-  };
-
-  const SHOT_SPRITE = [
-    '................',
-    '..rrrrrrrrrrrr..',
-    '.rcgggggggggcr..',
-    '.rgggggggggghR..',
-    '.rgLLLLLLLLLgR..',
-    '.rgLlllllllyhR..',
-    '.rglllllllyyhR..',
-    '.rgllllllyyYhR..',
-    '.rgllllyyYYYhR..',
-    '.rglyyyYYYYdhR..',
-    '.rgyYYYYYdddhR..',
-    '.rcgggggggggcR..',
-    '..rrhhhhhhhrr...',
-    '...rrkkkkkrr....',
-    '....RKkkkKR.....',
-    '.....RRRRR......',
-  ];
-
-  const SHOT_FILLED_SPRITE = [
-    '................',
-    '..rrrrrrrrrrrr..',
-    '.rcgggggggggcr..',
-    '.rgggggggggghR..',
-    '.rgLLLLLLLLLgR..',
-    '.rgLsssssssLhR..',  // brillo moneda en superficie
-    '.rgLsmmmmmsLhR..',
-    '.rgLmmmmmmmLhR..',
-    '.rgmmmmmmmMMhR..',
-    '.rglmMMMMMMMdhR.',
-    '.rgyMMDDDDDdhR..',
-    '.rcgggggggggcR..',
-    '..rrhhhhhhhrr...',
-    '...rrkkkkkrr....',
-    '....RKkkkKR.....',
-    '.....RRRRR......',
-  ];
-
-  // Moneda 16x16 con sombreado dorado (estilo SNES)
-  const COIN_PALETTE = {
-    '.': null,
-    'r': '#3a2400',          // outline marrón oscuro
-    'R': '#1a1000',          // outline más oscuro
-    's': '#ffffe8',          // brillo blanco
-    'c': '#fff4a0',          // gold highlight
-    'm': '#fce200',          // gold base
-    'M': '#c89010',          // gold mid shadow
-    'd': '#7a5008',          // gold deep shadow
-    'D': '#3a2400',          // gold darkest
-  };
-
-  const COIN_SPRITE = [
-    '................',
-    '......rrrrrr....',
-    '....rrcccmmrr...',
-    '...rsccmmmMMr...',
-    '..rsccmmmmMMr...',
-    '..rcmmmmmmMMr...',
-    '.rcmmmmmmmMMdr..',
-    '.rcmmmmmmMMMdr..',
-    '.rcmmmmmMMMMdr..',
-    '.rcmmmmMMMMddr..',
-    '..rmmmMMMMddr...',
-    '..rmmMMMMddRr...',
-    '...rrMMddddR....',
-    '....rrddddRR....',
-    '......rrrrr.....',
-    '................',
-  ];
 
   function renderPalette(sprite, palette, scale) {
     const w = sprite[0].length * scale;
@@ -1686,123 +1402,6 @@
   // ========================================================================
   // PANTALLA 4 — RUNNER: CODERE → GARITO
   // ========================================================================
-  const OBSTACLE_PALETTE = {
-    '.': null,
-    // grises (piedra)
-    'k': '#7a7a82', 'K': '#5a5a62', 'L': '#9a9aa2', 'D': '#3a3a40',
-    // azules (charco)
-    'b': '#4a8ec8', 'B': '#2a5a8c', 'C': '#7abeec', 'V': '#1a3a5a',
-    // naranja (gato)
-    'o': '#dd7a22', 'O': '#aa5511', 'y': '#ffcc66', 'g': '#0a0a0a',
-    'p': '#ff9999', // hocico/orejas interior
-    // rojo/blanco (señal)
-    'r': '#cc2233', 'R': '#882222', 'W': '#fafafa', 'Q': '#888',
-    's': '#5a3a1a', // poste señal/planta
-    // verde (planta)
-    'e': '#3a8a3a', 'E': '#1a5a1a', 'l': '#5acc5a', 'F': '#88dd44',
-    // negro (agujero)
-    'X': '#050505', 'x': '#1a1a1a', 'Y': '#2a2a2e',
-  };
-
-  const OBSTACLE_SPRITES = {
-    piedra: [
-      '................',
-      '................',
-      '.....KKkkk......',
-      '....KkLLkkk.....',
-      '...KkLLkkkkk....',
-      '..KkkkkkLkkkD...',
-      '..kkLkkkkkkkD...',
-      '..LkkkkkkkkkD...',
-      '..kkkkLkkkkkD...',
-      '..kkkkkkkkkkD...',
-      '...kkkkkkkkD....',
-      '....DDkkkkD.....',
-      '......DDDD......',
-      '................',
-    ],
-    charco: [
-      '................',
-      '....bbbbB.......',
-      '..bbBCBbbbb.....',
-      '.bbCCBbbbbbBbb..',
-      '.bCBbbbbbbbbbbb.',
-      'bbbBbbbbbCBbbbb.',
-      'bbbbbbbbbbbBbbb.',
-      '.bbbbbBbbbbbbbb.',
-      '.bbVbbbbbVbbbb..',
-      '..bbbVbbbbbbb...',
-      '...bbbbbbbb.....',
-      '.....bbbb.......',
-      '................',
-      '................',
-    ],
-    agujero: [
-      '................',
-      '......KkkkkK....',
-      '....KKxXXXxKK...',
-      '...KxXXXXXXxK...',
-      '..KxXXXXXXXXxK..',
-      '..xXXXXXXXXXXx..',
-      '..xXXXXXXXXXXx..',
-      '..xXXXXXXXXXXx..',
-      '..xXXXXXXXXXXx..',
-      '..KxXXXXXXXXxK..',
-      '...KxXXXXXXxK...',
-      '....KKxXXxKK....',
-      '......Kkkkk.....',
-      '................',
-    ],
-    gato: [
-      '...o..o.........',
-      '...oooooo.......',
-      '..oOoOoooo......',
-      '..oogggoooo.....',
-      '..oooopooo......',
-      '..ooooooooo.....',
-      '.ooooooooooo....',
-      'oooooooooooo....',
-      'ooo.oooo.ooo....',
-      '.oo.ooo..oo.....',
-      '................',
-      '................',
-      '................',
-      '................',
-    ],
-    senal: [
-      '.......W........',
-      '......WWW.......',
-      '.....WWrWW......',
-      '....WrrrrrW.....',
-      '...WrrrrrrrW....',
-      '..WrrrWWWrrrW...',
-      '.WrrrrWQWrrrrW..',
-      '.WrrrrrWrrrrrW..',
-      '..WrrrrrrrrrW...',
-      '...WWWWWWWWW....',
-      '.......ss.......',
-      '.......ss.......',
-      '.......ss.......',
-      '.......ss.......',
-    ],
-    planta: [
-      '................',
-      '....e.....e.....',
-      '...eEe...eEe....',
-      '..eEFEeEEFEEe...',
-      '..EFFFEFFFFEE...',
-      '..eEElllllEEe...',
-      '...eEElEEEEe....',
-      '....eelllee.....',
-      '......eee.......',
-      '......sss.......',
-      '......sss.......',
-      '......sss.......',
-      '................',
-      '................',
-    ],
-  };
-
   const OBSTACLE_TYPES = Object.keys(OBSTACLE_EMOJI);
 
   const ROUTE_DURATION = 25;     // segundos
