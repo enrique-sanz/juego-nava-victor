@@ -971,18 +971,20 @@
     const cx = cw / 2;
     const cy = ch / 2;
     // separación entre centros: la mayor posible que mantenga el rombo dentro del cluster
-    const s = Math.floor(Math.min((cw - SHOT_W) / 4, (ch - SHOT_W) / 4));
+    const sx = Math.floor((cw - SHOT_W) / 4);
+    // verticalmente juntamos más los chupitos para que no haya tanto hueco
+    const sy = Math.floor(Math.min((ch - SHOT_W) / 4, sx * 0.55));
 
     const positions = [
-      { x: cx,         y: cy - 2 * s },                       // A — arriba
-      { x: cx - s,     y: cy - s },                           // D — arriba-izda
-      { x: cx + s,     y: cy - s },                           // B — arriba-dcha
-      { x: cx - 2 * s, y: cy },                               // G — izda
-      { x: cx,         y: cy,         isCenter: true },       // E — centro
-      { x: cx + 2 * s, y: cy },                               // C — dcha
-      { x: cx - s,     y: cy + s },                           // H — abajo-izda
-      { x: cx + s,     y: cy + s },                           // F — abajo-dcha
-      { x: cx,         y: cy + 2 * s, isDanger: true },       // I — abajo = trampa
+      { x: cx,          y: cy - 2 * sy },                       // A — arriba
+      { x: cx - sx,     y: cy - sy },                           // D — arriba-izda
+      { x: cx + sx,     y: cy - sy },                           // B — arriba-dcha
+      { x: cx - 2 * sx, y: cy },                                // G — izda
+      { x: cx,          y: cy,          isCenter: true },       // E — centro
+      { x: cx + 2 * sx, y: cy },                                // C — dcha
+      { x: cx - sx,     y: cy + sy },                           // H — abajo-izda
+      { x: cx + sx,     y: cy + sy },                           // F — abajo-dcha
+      { x: cx,          y: cy + 2 * sy, isDanger: true },       // I — abajo = trampa
     ];
 
     positions.forEach((pos, idx) => {
